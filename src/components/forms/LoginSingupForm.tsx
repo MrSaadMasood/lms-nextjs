@@ -10,21 +10,19 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+import useToaster from "@/hooks/useToaster"
+import { nameSchema, passwordSchema } from "@/lib/schema"
 import { zodResolver } from "@hookform/resolvers/zod"
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { Button } from "../ui/button"
-import { passwordSchema } from "@/lib/schema"
 
 const loginSignUpSchema = z.object({
-  username: z.string().min(2, {
-    message: "Must have at least 2 characters"
-  }).max(100, {
-    message: "Must have at most 100 characters"
-  }),
+  firstname: nameSchema,
+  lastname: nameSchema,
   email: z.string().email({ message: "Must be a valid email adress" }),
   password: passwordSchema
 })
@@ -34,31 +32,48 @@ export default function LoginSignupForm() {
   const pathname = usePathname()
   const isSignUpPage = pathname.includes("signup")
   const [showPassword, setShowPassword] = useState(false)
+  const { errorToast } = useToaster()
+  const router = useRouter()
   const form = useForm<z.infer<typeof loginSignUpSchema>>({
     resolver: zodResolver(loginSignUpSchema),
     defaultValues: {
-      username: isSignUpPage ? "" : "hh",
+      firstname: isSignUpPage ? "" : "hh",
+      lastname: isSignUpPage ? "" : "hh",
       email: "",
       password: ""
     }
-
   })
+  const { formState: { isSubmitting } } = form
 
-  function onSubmit(data: z.infer<typeof loginSignUpSchema>) {
-    signInSingUpUser("login", data)
+  async function onSubmit(data: z.infer<typeof loginSignUpSchema>) {
+    const isSuccess = await signInSingUpUser(isSignUpPage ? "signup" : "login", data)
+    if (isSignUpPage) {
+      if (!isSuccess) return errorToast("Authentication Failed")
+      router.push("/login")
+    }
   }
   return (
     <Form {...form}  >
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2" >
         {pathname.includes("signup") && (
-          <FormField control={form.control} name="username"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Username</FormLabel>
-                <FormControl><Input placeholder="username" {...field} /></FormControl>
-                <FormMessage />
-              </FormItem>
-            )} />
+          <>
+            <FormField control={form.control} name="firstname"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>First Name</FormLabel>
+                  <FormControl><Input placeholder="John" {...field} /></FormControl>
+                  <FormMessage />
+                </FormItem>
+              )} />
+            <FormField control={form.control} name="lastname"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Last Name</FormLabel>
+                  <FormControl><Input placeholder="Doe" {...field} /></FormControl>
+                  <FormMessage />
+                </FormItem>
+              )} />
+          </>
         )}
         <FormField control={form.control}
           name="email"
@@ -94,7 +109,10 @@ export default function LoginSignupForm() {
             href={"/forgot-password"}>Forgot Password ?</Link>}
         </div>
 
-        <Button type="submit">{isSignUpPage ? "Sign Up" : "Log In"}</Button>
+        <Button type="submit" disabled={isSubmitting}>{isSignUpPage ?
+          isSubmitting ? "Signing Up" : "Sign Up" : isSubmitting ? "Logging In" : "Log In"}
+        </Button>
+
       </form >
     </Form >
   )

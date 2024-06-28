@@ -33,7 +33,8 @@ function ResetPasswordForm() {
     }
     const token = pathname.split("/").pop()
     const result = await updateUserPassword(token || "", data.newPassword)
-    // router.replace("/login")
+    if (!result) return errorToast("Password Update Failed")
+    router.replace("/login")
   }
   return (
     <Form {...form}>
