@@ -2,23 +2,37 @@ CREATE DATABASE lms;
 CREATE USER lms_admin;
 GRANT ALL PRIVILEGES ON DATABASE lms TO lms_admin;
 
+DROP TABLE lms_user_overall_data;
+DROP TABLE lms_tokens;
+DROP TABLE lms_admins;
+DROP TABLE lms_academy;
+DROP TABLE lms_users;
+DROP TABLE lms_test_data;
 
 CREATE TABLE lms_users (
-    id UUID PRIMARY KEY,
-    first_name VARCHAR(128) NOT NULL,
-    last_name VARCHAR(128) NOT NULL,
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    username VARCHAR(300) NOT NULL UNIQUE,
     email VARCHAR(200) UNIQUE NOT NULL,
     password VARCHAR(300) NOT NULL,
-    role VARCHAR(50) NOT NULL,
-    subscription_type VARCHAR(15) NOT NULL,
-    free_tokens SMALLINT NOT NULL,
-    login_method VARCHAR(50) NOT NULL
+    role VARCHAR(50) NOT NULL DEFAULT 'user',
+    subscription_type VARCHAR(15) NOT NULL DEFAULT 'none',
+    free_tokens SMALLINT NOT NULL DEFAULT 300,
+    login_method VARCHAR(50) NOT NULL DEFAULT 'normal'
+);
+
+CREATE TABLE lms_admins (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  role VARCHAR(50) NOT NULL DEFAULT 'admin',
+  username VARCHAR(300) NOT NULL UNIQUE,
+  password VARCHAR(300) NOT NULL,
+  email VARCHAR(200) UNIQUE NOT NULL,
+  login_method VARCHAR(50) NOT NULL DEFAULT 'normal'
 );
 
 CREATE TABLE lms_academy (
-  id UUID PRIMARY KEY,
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   name VARCHAR(300) NOT NULL UNIQUE,
-  password VARCHAR(300) NOT NULL,
+  admin_id UUID REFERENCES lms_admins,
   public_password VARCHAR(300) NOT NULL
 );
 
@@ -52,24 +66,26 @@ CREATE TABLE lms_tokens (
     token VARCHAR(300) NOT NULL
 );
  
-INSERT INTO lms_users (id, first_name, last_name, email, password, role, subscription_type, free_tokens, login_method) 
-VALUES ( 'f415284b-87b4-4206-a79f-5bd61b00de97', 'hamza', 'saleem', 'hamza@gmail.com', 
+INSERT INTO lms_users (username, email, password, role, subscription_type, free_tokens, login_method) 
+VALUES ( 'hamza saleem', 'hamza@gmail.com', 
 '$2a$10$Aqb2UA6V6n/p6tJZPUWvre3HnSef3WX/v822L7x9RxHT0mJXkx9w6', 'user', 'none', 300, 'normal');
 
-INSERT INTO lms_users (id, first_name, last_name, email, password, role, subscription_type, free_tokens, login_method) 
-VALUES ( '0b33ebed-9a89-4e15-b920-88082b06f6ef', 'saad', 'masood', 'saad@gmail.com', 
+INSERT INTO lms_users (username, email, password, role, subscription_type, free_tokens, login_method) 
+VALUES ('saad masood', 'saad@gmail.com', 
 '$2a$10$43QZZ3oxQKs0Am97EwbDF.PWgLxrRgSxMP/yjbDXj4PNF4/58QlFW', 'admin', 'none', 300, 'normal');
 
-INSERT INTO lms_academy (
-  id,
-  name,
-  password,
-  public_password
-) VALUES 
-('9c92a2ad-b70b-4643-a845-a9756cc5f8fd','British Council', 'random', 'random'),
-('7d7d4047-8c4d-467c-9e3d-406129240923','Punjab Public Service Commission', 'random', 'random'),
-('f6184cb2-9668-451a-bc92-ed0266e75a0c','Federal Public Service Commission', 'random', 'random'),
-('29b4c008-654a-4481-860f-b0b595cfc967','Union Public Service Commission', 'random', 'random');
+
+INSERT INTO lms_admins (id, role, username, password, email)
+VALUES
+('3a4f8b32-2c7c-4b67-9b8b-0d4a9b63a9e7', 'admin', 'asad', '$2a$10$K/ed3iH1rhbGuD.WP7EkUupKkI9pDWS93Y8Jg0HJmVYjqmfJYPjhy', 'hamza_admin@gmail.com'),
+('5e4f8c78-8c4c-4b78-9b9c-0f6a9a72c7e5', 'admin', 'hunzla', '$2a$10$F/Z3zzB1xhC2bU.W9CkN5uK9mPbR/S6U4D2Vg0HJrEYkl8dIZTp3u', 'saad_admin@gmail.com');
+
+INSERT INTO lms_academy (name, admin_id, public_password)
+VALUES
+( 'British Council', '3a4f8b32-2c7c-4b67-9b8b-0d4a9b63a9e7', '$2a$10$J/a3BbH7a/dXl.Tg9J5fUeQ3lR7cT0eJ7C1K6pJHYkWjq1QJYPjkt'),
+( 'Punjab Public Service Commission', '5e4f8c78-8c4c-4b78-9b9c-0f6a9a72c7e5', '$2a$10$L/f3CcI2yhD3fW.Z5DlL7vM8nZrR7fT0kJ7D3pIHWrGkl9eJYPjkl'),
+( 'Federal Public Service Commission', '3a4f8b32-2c7c-4b67-9b8b-0d4a9b63a9e7', '$2a$10$K/h4DdJ3aiG5gU.W6EkM6yO9oZrS9gU1hL2E6nKHYrHml1kHYPlnm'),
+( 'Union Public Service Commission', '5e4f8c78-8c4c-4b78-9b9c-0f6a9a72c7e5', '$2a$10$M/i5EeK4b/dXl.UX7FlN8pQ4mT8eV1iL3F7F0oJIZvNlm2mIZPnmo');
 
 
 INSERT INTO lms_test_data (
