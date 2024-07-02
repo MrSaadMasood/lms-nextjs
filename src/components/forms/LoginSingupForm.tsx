@@ -1,5 +1,5 @@
 'use client'
-import { signInSingUpUser } from "@/actions/action"
+import { signInSignUpUser } from "@/actions/action"
 import { Checkbox } from '@/components/ui/checkbox'
 import {
   Form,
@@ -21,14 +21,13 @@ import { z } from "zod"
 import { Button } from "../ui/button"
 
 const loginSignUpSchema = z.object({
-  firstname: nameSchema,
-  lastname: nameSchema,
+  username: nameSchema,
   email: z.string().email({ message: "Must be a valid email adress" }),
   password: passwordSchema
 })
 
 
-export default function LoginSignupForm() {
+export default function LoginSignupForm({ isAdminPage }: { isAdminPage: boolean }) {
   const pathname = usePathname()
   const isSignUpPage = pathname.includes("signup")
   const [showPassword, setShowPassword] = useState(false)
@@ -37,8 +36,7 @@ export default function LoginSignupForm() {
   const form = useForm<z.infer<typeof loginSignUpSchema>>({
     resolver: zodResolver(loginSignUpSchema),
     defaultValues: {
-      firstname: isSignUpPage ? "" : "hh",
-      lastname: isSignUpPage ? "" : "hh",
+      username: isSignUpPage ? "" : "hh",
       email: "",
       password: ""
     }
@@ -46,10 +44,15 @@ export default function LoginSignupForm() {
   const { formState: { isSubmitting } } = form
 
   async function onSubmit(data: z.infer<typeof loginSignUpSchema>) {
-    const isSuccess = await signInSingUpUser(isSignUpPage ? "signup" : "login", data)
+
+    const isSuccess = await signInSignUpUser(
+      isSignUpPage ? "signup" : "login",
+      data,
+      isAdminPage ? "admin" : "user"
+    )
     if (isSignUpPage) {
       if (!isSuccess) return errorToast("Authentication Failed")
-      router.push("/login")
+      router.push(`/login?admin=${isAdminPage}`)
     }
   }
   return (
@@ -57,18 +60,10 @@ export default function LoginSignupForm() {
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2" >
         {pathname.includes("signup") && (
           <>
-            <FormField control={form.control} name="firstname"
+            <FormField control={form.control} name="username"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>First Name</FormLabel>
-                  <FormControl><Input placeholder="John" {...field} /></FormControl>
-                  <FormMessage />
-                </FormItem>
-              )} />
-            <FormField control={form.control} name="lastname"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Last Name</FormLabel>
+                  <FormLabel>Username</FormLabel>
                   <FormControl><Input placeholder="Doe" {...field} /></FormControl>
                   <FormMessage />
                 </FormItem>
