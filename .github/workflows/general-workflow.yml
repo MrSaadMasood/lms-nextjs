@@ -39,9 +39,8 @@ jobs:
           npm run build
       - name: building project on windows
         if: ${{ contains(matrix.os, 'windows')}}
-        env: ${{ env.ENV_SECRETS }}
         run: |
           echo %ENV_SECRETS% >> .env.local
-          dir /a
+          ls
           cat .env.local
           npm run build
