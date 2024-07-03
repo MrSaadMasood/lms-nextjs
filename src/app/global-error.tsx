@@ -10,7 +10,7 @@ export default function Error({ error, reset }: {
       <section>
         <div className="w-screen h-screen bg-black text-white  flex flex-col justify-center items-center
           text-3xl space-y-3">
-          {error.message}</div>
+          {error.message} || Some Bad Happened!</div>
         <button onClick={() => reset()}>Try Again!</button></section>
     </body></html>
   )

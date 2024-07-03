@@ -6,9 +6,18 @@ const envSchema = z.object({
   BASE_URL: z.string(),
   AUTH_SECRET: z.string(),
   EMAIL: z.string().email(),
-  MONGO_URL: z.string()
+  POSTGRES_URL: z.string().optional(),
 })
 
 const env = envSchema.parse(process.env)
+const { AUTH_SECRET, BASE_URL, EMAIL, AUTH_GOOGLE_SECRET, AUTH_GOOGLE_ID,
+  POSTGRES_URL } = env
 
-export { env }
+export {
+  AUTH_GOOGLE_ID,
+  AUTH_GOOGLE_SECRET,
+  AUTH_SECRET,
+  EMAIL,
+  BASE_URL,
+  POSTGRES_URL
+}

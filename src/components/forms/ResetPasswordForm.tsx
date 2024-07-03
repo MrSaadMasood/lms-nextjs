@@ -16,14 +16,14 @@ const emailSchema = z.object({
   newPassword: passwordSchema,
   confirmPassword: passwordSchema
 })
-function ResetPasswordForm() {
+function ResetPasswordForm({ isAdminPage }: { isAdminPage: boolean }) {
 
   const form = useForm<z.infer<typeof emailSchema>>({
     resolver: zodResolver(emailSchema),
   })
   const [showPassword, setShowPassword] = useState(false)
   const { handleSubmit, control, formState: { isSubmitting } } = form
-  const { errorToast, normalToast } = useToaster()
+  const { errorToast } = useToaster()
   const pathname = usePathname()
   const router = useRouter()
 
@@ -32,8 +32,9 @@ function ResetPasswordForm() {
       return errorToast("Passwords do not match! Try Again!")
     }
     const token = pathname.split("/").pop()
-    const result = await updateUserPassword(token || "", data.newPassword)
-    // router.replace("/login")
+    const result = await updateUserPassword(token || "", data.newPassword, isAdminPage ? "admin" : "user")
+    if (!result) return errorToast("Password Update Failed")
+    router.replace("/login")
   }
   return (
     <Form {...form}>

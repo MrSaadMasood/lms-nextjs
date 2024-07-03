@@ -1,4 +1,4 @@
-import { env } from "@/lib/envValidator";
+import { BASE_URL } from "@/lib/envValidator";
 import {
   Body,
   Button,
@@ -20,7 +20,6 @@ interface VercelInviteUserEmailProps {
   inviteLink?: string;
 }
 
-const { BASE_URL } = env
 const baseUrl = BASE_URL
 
 export const ForgetPasswordTemplate = ({

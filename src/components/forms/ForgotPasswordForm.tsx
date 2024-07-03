@@ -11,7 +11,7 @@ import useToaster from "@/hooks/useToaster";
 const emailSchema = z.object({
   email: z.string().email({ message: "Must provide a Valid Email Adress" })
 })
-function ForgotPasswordForm() {
+function ForgotPasswordForm({ isAdminPage }: { isAdminPage: boolean }) {
 
   const form = useForm<z.infer<typeof emailSchema>>({
     resolver: zodResolver(emailSchema),
@@ -20,7 +20,7 @@ function ForgotPasswordForm() {
   const { errorToast, normalToast } = useToaster()
 
   async function sendEmailToUser(data: { email: string }) {
-    const { error } = await sendEmail(data.email)
+    const { error } = await sendEmail(data.email, isAdminPage ? "admin" : "user")
     if (error) return errorToast("Failed to send email")
     normalToast("Email sent successfully")
   }

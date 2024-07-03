@@ -3,17 +3,19 @@ import AuthTemplate from "./auth/AuthTemplate";
 import SignUpCallLink from "./auth/SignUpCallLink";
 import GoogleSignInButton from "./buttons/GoogleSignInButton";
 import LogoutButton from "./buttons/LogoutButton";
-import GoogleSignInError from "./errros/GoogleSignInError";
 
-export const LoginSignUpPage = ({ heading }: { heading: string }) => {
+export const LoginSignUpPage = ({ heading, isAdminPage }:
+  {
+    heading: string
+    isAdminPage: boolean
+  }) => {
   return (
     <AuthTemplate heading={heading} >
       <>
-        <LoginSignupForm />
-        <GoogleSignInButton />
-        <GoogleSignInError />
+        <LoginSignupForm isAdminPage={isAdminPage} />
+        {!isAdminPage && <GoogleSignInButton />}
         <LogoutButton />
-        <SignUpCallLink />
+        <SignUpCallLink isAdminPage={isAdminPage} />
       </>
     </AuthTemplate>
   )
