@@ -1,18 +1,17 @@
 import { BASE_URL } from "@/lib/envValidator";
-import {
-  Body,
-  Button,
-  Container,
-  Head,
-  Heading,
-  Hr,
-  Html,
-  Link,
-  Preview,
-  Section,
-  Tailwind,
-  Text
-} from "@react-email/components";
+import { Head } from "@react-email/head"
+import { Html } from "@react-email/html"
+import { Link } from '@react-email/link'
+import { Button } from '@react-email/button'
+import { Preview } from '@react-email/preview'
+import { Tailwind } from '@react-email/tailwind'
+import { Container } from '@react-email/container'
+import { Hr } from '@react-email/hr'
+import { Heading } from '@react-email/heading'
+import { Section } from '@react-email/section'
+import { Text } from '@react-email/text'
+
+
 interface VercelInviteUserEmailProps {
   username?: string;
   invitedByUsername?: string;
@@ -36,7 +35,7 @@ export const ForgetPasswordTemplate = ({
       <Head />
       <Preview>{previewText}</Preview>
       <Tailwind>
-        <Body className="bg-white my-auto mx-auto font-sans px-2">
+        <Section className="bg-white my-auto mx-auto font-sans px-2">
           <Container className="border border-solid border-[#eaeaea] rounded my-[40px] mx-auto p-[20px] max-w-[465px]">
             <Heading className="text-black text-[24px] font-normal text-center p-0 my-[30px] mx-0">
               Reset Password
@@ -77,7 +76,7 @@ export const ForgetPasswordTemplate = ({
               <span className="text-black">{invitedByUsername}</span>. If you
               were not expecting this invitation, you can ignore this email.            </Text>
           </Container>
-        </Body>
+        </Section>
       </Tailwind>
     </Html>
   );
