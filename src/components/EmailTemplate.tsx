@@ -1,4 +1,4 @@
-import { BASE_URL } from "@/lib/envValidator";
+import { AUTH_URL } from "@/lib/envValidator";
 import { Head } from "@react-email/head"
 import { Html } from "@react-email/html"
 import { Link } from '@react-email/link'
@@ -19,7 +19,7 @@ interface VercelInviteUserEmailProps {
   inviteLink?: string;
 }
 
-const baseUrl = BASE_URL
+const baseUrl = AUTH_URL
 
 export const ForgetPasswordTemplate = ({
   username,
