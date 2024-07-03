@@ -33,7 +33,7 @@ jobs:
       - name: linting project
         run: npm run lint
       - name: building project on ubuntu
-        if: ${{ contains(matrix.os, 'mac')}}
+        if: ${{ contains(matrix.os, 'ubuntu')}}
         run: |
           echo "$ENV_SECRETS" >> .env.local
           npm run build
@@ -41,6 +41,5 @@ jobs:
         if: ${{ contains(matrix.os, 'windows')}}
         run: |
           $env:ENV_SECRETS | Out-File -FilePath .env.local -Append
-          dir
           npm run build
         shell: pwsh
