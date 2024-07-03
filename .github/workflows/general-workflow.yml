@@ -19,7 +19,7 @@ jobs:
     environment: deployment
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        os: [windows-latest]
     runs-on: ${{ matrix.os }}
     env:
       ENV_SECRETS: ${{ secrets.ENV_SECRETS }}
@@ -41,6 +41,6 @@ jobs:
         if: ${{ contains(matrix.os, 'windows')}}
         run: |
           echo %ENV_SECRETS% >> .env.local
-          la -a
+          ls -a
           cat .env.local
           npm run build
