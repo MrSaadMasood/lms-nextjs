@@ -40,7 +40,7 @@ jobs:
       - name: building project on windows
         if: ${{ contains(matrix.os, 'windows')}}
         run: |
-          echo ${{ secrets.ENV_SECRETS }} >> .env.local
-          ls
-          cat .env.local
+          echo %ENV_SECRETS% >> .env.local
+          dir
+          type .env.local
           npm run build
