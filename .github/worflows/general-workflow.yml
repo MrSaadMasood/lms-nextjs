@@ -1,0 +1,42 @@
+name: build-test-lint
+
+on:
+  push:
+    branches:
+      - "feature/**"
+  branches-ignore:
+    - main
+  pull_request:
+    branches:
+      - main
+    types:
+      - opened
+      - synchronize
+
+jobs:
+  build-pipeline:
+    name: build-tester
+    defaults:
+      run:
+        working-directory: ./
+    environment: deployment
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    env:
+      ENV_SECRETS: ${{ secrets.ENV_SECRETS }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node
+        with:
+          node-version: "20.x"
+      - name: installing dependencies
+        run: npm ci
+      - name: linting project
+        run: npm run lint
+      - name: building project
+        run: |
+          echo "$ENV_SECRETS" >> .env.local
+          npm run build
+
