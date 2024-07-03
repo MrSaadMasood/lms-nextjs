@@ -3,16 +3,15 @@ name: build-test-lint
 on:
   push:
     branches:
-      - "feature/**"
-  branches-ignore:
-    - main
+      - feature/**
+    branches-ignore:
+      - main
   pull_request:
     branches:
       - main
     types:
       - opened
       - synchronize
-
 jobs:
   build-pipeline:
     name: build-tester
@@ -39,4 +38,3 @@ jobs:
         run: |
           echo "$ENV_SECRETS" >> .env.local
           npm run build
-
