@@ -1,14 +1,16 @@
 export const navbarLink = [
   { content: "Home", to: "/" },
   { content: "About", to: "/about" },
-  { content: "Pricing", to: "/#pricing" }
-]
+  { content: "Pricing", to: "/#pricing" },
+];
 
 export const authLinksNavBar = [
   { content: "Log In", to: "/login" },
   { content: "Sign Up", to: "/signup" },
-  { content: "Admin", to: "/login?admin=true" }
-]
+  { content: "Admin", to: "/login?admin=true" },
+];
+
+export const authenticatedUserNavbarLinks = ["/main", "/search", "/real-time", "/account"];
 
 export const variants = {
   hidden: { width: 0 },
@@ -17,17 +19,50 @@ export const variants = {
     transition: {
       duration: 0.5,
       when: "beforeChildren",
-      staggerChildren: 0.2
-    }
+      staggerChildren: 0.2,
+    },
   },
-  exit: { width: 0 }
-
-}
+  exit: { width: 0 },
+};
 
 export const itemsVariants = {
   hidden: { x: 10, opacity: 0 },
   visible: {
     x: 0,
     opacity: 1,
+  },
+};
+
+export const priceCardData = [
+  {
+    heading: "Token Pack",
+    price: "$300",
+    desc: `Purchase tokens and enjoy complete
+          access to tests as long as you have tokens in your account.
+          Perfect for flexible usage tailored to your needs.`,
+    list: [
+      "Flexible usage",
+      "Access to all tests",
+      "Pay as you go",
+      "No expiration on tokens",
+      "24/7 customer support"
+    ],
+    callToAction: "Buy Tokens"
+  },
+  {
+    heading: "Premium Ultra",
+    price: "$500",
+    desc: `Experience the ultimate convenience with our Premium plan.
+            Get lifetime access to all our services without any limitations.
+            One-time purchase for unlimited, uninterrupted access forever.`,
+    list: [
+      "Lifetime access",
+      "Unlimited tests",
+      "No recurring fees",
+      "Priority support",
+      "Exclusive content",
+      "Regular updates"
+    ],
+    callToAction: "Unlimited Access"
   }
-}
+]
