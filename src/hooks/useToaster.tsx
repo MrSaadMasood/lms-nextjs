@@ -1,25 +1,25 @@
-import { useToast } from '@/components/ui/use-toast'
+import { useToast } from "@/components/ui/use-toast";
 
 function useToaster() {
-  const { toast } = useToast()
+  const { toast } = useToast();
 
   function errorToast(message: string) {
     toast({
       description: message,
       variant: "destructive",
-      className: "bg-red-700 text-white rounded-lg font-bold"
-    })
+      className: "bg-red-700 text-white rounded-lg font-bold",
+    });
   }
 
   function normalToast(message: string) {
     toast({
-      description: message
-    })
+      description: message,
+    });
   }
   return {
     errorToast,
-    normalToast
-  }
+    normalToast,
+  };
 }
 
-export default useToaster
+export default useToaster;
