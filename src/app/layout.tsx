@@ -1,10 +1,11 @@
-import Navbar from "@/components/Navbar";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { SessionProvider } from "next-auth/react"
+import { SessionProvider } from "next-auth/react";
 import { auth } from "@/lib/authJs/auth";
 import { Toaster } from "@/components/ui/toaster";
+import NavbarUnAuth from "@/components/Navbar/NavbarUnAuth";
+import NavbarAuth from "@/components/Navbar/NavbarAuth";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,16 +19,17 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const session = await auth()
+  const session = await auth();
   return (
     <html lang="en">
       <body className={inter.className}>
         <SessionProvider session={session}>
-          {!session && <Navbar />}
+          {!session && <NavbarUnAuth />}
+          {session && <NavbarAuth session={session} />}
           {children}
           <Toaster />
         </SessionProvider>
       </body>
-    </html >
+    </html>
   );
 }
