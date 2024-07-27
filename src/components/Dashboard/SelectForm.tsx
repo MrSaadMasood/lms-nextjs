@@ -1,24 +1,18 @@
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger
-} from "@/components/ui/select"
+import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select";
 
 export default function SelectForm({
   selectedOption,
   changeValue,
   placeholder,
   type,
-  list
+  list,
 }: {
-  selectedOption: string,
-  changeValue: (value: string, type: string) => void,
-  placeholder: string,
-  type: string,
-  list: string[]
+  selectedOption: string;
+  changeValue: (value: string, type: string) => void;
+  placeholder: string;
+  type: string;
+  list: string[];
 }) {
-
   return (
     <Select onValueChange={(value) => changeValue(value, type)} defaultValue={selectedOption}>
       <SelectTrigger>
@@ -26,9 +20,11 @@ export default function SelectForm({
       </SelectTrigger>
       <SelectContent>
         {list.map((item, index) => (
-          <SelectItem key={index} value={item} className="text-black" >{item}</SelectItem>
+          <SelectItem key={index} value={item} className="text-black">
+            {item}
+          </SelectItem>
         ))}
       </SelectContent>
     </Select>
-  )
+  );
 }

@@ -12,12 +12,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
           <div className="text-4xl lg:text-5xl font-bold">Qafia</div>
           <Image width={60} height={60} src={"/lms-logo.png"} alt="logo" />
         </section>
-        {session && session.user.role === "user" ? (
-          <UserSidebar />
-        ) : (
-
-          <UserSidebar />
-        )}
+        {session && session.user.role === "user" ? <UserSidebar /> : <UserSidebar />}
       </aside>
       <section className="h-full w-full md:w-[80%] ">{children}</section>
     </div>

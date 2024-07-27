@@ -13,8 +13,8 @@ import { FaArrowDownLong, FaArrowUpLong } from "react-icons/fa6";
 import { LuChevronsUpDown } from "react-icons/lu";
 
 interface DataTableColumnHeaderProps<TData, TValue> {
-  column: Column<TData, TValue>
-  title: string
+  column: Column<TData, TValue>;
+  title: string;
 }
 
 export function DataTableColumnHeader<TData, TValue>({
@@ -22,18 +22,14 @@ export function DataTableColumnHeader<TData, TValue>({
   title,
 }: DataTableColumnHeaderProps<TData, TValue>) {
   if (!column.getCanSort()) {
-    return <div >{title}</div>
+    return <div>{title}</div>;
   }
 
   return (
     <div className={cn("flex items-center space-x-2")}>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button
-            variant="ghost"
-            size="sm"
-            className=" h-8 "
-          >
+          <Button variant="ghost" size="sm" className=" h-8 ">
             <span>{title}</span>
             {column.getIsSorted() === "desc" ? (
               <FaArrowDownLong className="ml-2" />
@@ -61,5 +57,5 @@ export function DataTableColumnHeader<TData, TValue>({
         </DropdownMenuContent>
       </DropdownMenu>
     </div>
-  )
+  );
 }

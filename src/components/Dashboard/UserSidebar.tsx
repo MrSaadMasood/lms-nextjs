@@ -21,8 +21,9 @@ function UserSidebar() {
             href={navbarLinkGenerator("user", authenticatedUserNavbarLinks[index])}
             className={clsx(
               ` w-[95%] lg:w-[80%] p-4 rounded-xl
-             duration-300`, !isActive && "hover:bg-gray-200",
-              isActive && `bg-black  text-white`
+             duration-300`,
+              !isActive && "hover:bg-gray-200",
+              isActive && `bg-black  text-white`,
             )}
           >
             <li className="w-full h-full flex justify-center items-center space-x-4">

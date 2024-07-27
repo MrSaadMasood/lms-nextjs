@@ -1,13 +1,7 @@
-import Link from "next/link"
-import { LuCheckCircle } from "react-icons/lu"
+import Link from "next/link";
+import { LuCheckCircle } from "react-icons/lu";
 
-export default function CallToActionButton({
-  content,
-  link
-}: {
-  content: string,
-  link: string
-}) {
+export default function CallToActionButton({ content, link }: { content: string; link: string }) {
   return (
     <button
       className=" font-bold text-sm  p-2 rounded-3xl flex justify-between items-center
@@ -20,5 +14,5 @@ export default function CallToActionButton({
         {content}
       </Link>
     </button>
-  )
+  );
 }

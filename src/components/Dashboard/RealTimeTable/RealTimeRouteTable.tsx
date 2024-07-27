@@ -1,53 +1,66 @@
 import { Input } from "@/components/ui/input";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { ColumnFiltersState, SortingState, VisibilityState, createColumnHelper, flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table';
-import { useState } from 'react';
-import mock_data from '../../../../MOCK_DATA.json';
-import { DataTableColumnHeader } from './DataTableColumnHeadet';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  ColumnFiltersState,
+  SortingState,
+  VisibilityState,
+  createColumnHelper,
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
+import { useState } from "react";
+import mock_data from "../../../../MOCK_DATA.json";
+import { DataTableColumnHeader } from "./DataTableColumnHeadet";
 import DataTablePagination from "./DataTablePagination";
-import { DataTableViewOptions } from './DataTableViewOptions';
+import { DataTableViewOptions } from "./DataTableViewOptions";
 
 type Mock = {
-  id: number,
-  first_name: string,
-  last_name: string,
-  email: string,
-  date_of_birth: string,
-  country: string,
-  phone: string
-}
+  id: number;
+  first_name: string;
+  last_name: string;
+  email: string;
+  date_of_birth: string;
+  country: string;
+  phone: string;
+};
 
-
-const columnHelper = createColumnHelper<Mock>()
+const columnHelper = createColumnHelper<Mock>();
 const columns = [
   columnHelper.accessor("first_name", {
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="First Name" />
-    )
+    header: ({ column }) => <DataTableColumnHeader column={column} title="First Name" />,
   }),
   columnHelper.accessor("date_of_birth", {
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="DOB" />
-    )
+    header: ({ column }) => <DataTableColumnHeader column={column} title="DOB" />,
   }),
   columnHelper.accessor("country", {
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Country" />
-    )
-  })
-]
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Country" />,
+  }),
+];
 
 export default function RealTimeRouteTable({
-  showCoinChart
-}: { showCoinChart: (id: string, value: string) => void }) {
-  const [data, setData] = useState<Mock[]>(mock_data)
+  showCoinChart,
+}: {
+  showCoinChart: (id: string, value: string) => void;
+}) {
+  const [data, setData] = useState<Mock[]>(mock_data);
   const [pagination, setPagination] = useState({
     pageIndex: 0,
-    pageSize: 20
-  })
-  const [sorting, setSorting] = useState<SortingState>([])
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
+    pageSize: 20,
+  });
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
 
   const table = useReactTable({
     data,
@@ -60,13 +73,13 @@ export default function RealTimeRouteTable({
       pagination,
       sorting,
       columnFilters,
-      columnVisibility
+      columnVisibility,
     },
     onPaginationChange: setPagination,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
-    onColumnVisibilityChange: setColumnVisibility
-  })
+    onColumnVisibilityChange: setColumnVisibility,
+  });
 
   return (
     <div className=" w-full p-2 rounded-2xl flex flex-col justify-center items-center bg-white overflow-hidden ">
@@ -74,8 +87,7 @@ export default function RealTimeRouteTable({
         <Input
           placeholder="Filter Fist Names"
           value={table.getColumn("first_name")?.getFilterValue() as string}
-          onChange={e => table.getColumn("first_name")?.setFilterValue(e.target.value)
-          }
+          onChange={(e) => table.getColumn("first_name")?.setFilterValue(e.target.value)}
           className="max-w-sm"
         />
         <DataTableViewOptions table={table} />
@@ -83,25 +95,28 @@ export default function RealTimeRouteTable({
       {/* dropdown for visibility */}
 
       {/* table */}
-      <Table >
-        <TableHeader >
-          {table.getHeaderGroups().map(headerGroup => (
-            <TableRow key={headerGroup.id} >
-              {headerGroup.headers.map(header => (
-                <TableHead key={header.id} >{header.isPlaceholder ? null :
-                  flexRender(header.column.columnDef.header, header.getContext())}
+      <Table>
+        <TableHeader>
+          {table.getHeaderGroups().map((headerGroup) => (
+            <TableRow key={headerGroup.id}>
+              {headerGroup.headers.map((header) => (
+                <TableHead key={header.id}>
+                  {header.isPlaceholder
+                    ? null
+                    : flexRender(header.column.columnDef.header, header.getContext())}
                 </TableHead>
               ))}
             </TableRow>
           ))}
         </TableHeader>
-        <TableBody >
-          {table.getRowModel().rows.map(row => (
-            <TableRow key={row.id} >
-              {row.getVisibleCells().map(cell => (
+        <TableBody>
+          {table.getRowModel().rows.map((row) => (
+            <TableRow key={row.id}>
+              {row.getVisibleCells().map((cell) => (
                 <TableCell
                   key={cell.id}
-                  onClick={() => showCoinChart(cell.id, cell.getValue() as string)}>
+                  onClick={() => showCoinChart(cell.id, cell.getValue() as string)}
+                >
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </TableCell>
               ))}
@@ -111,7 +126,6 @@ export default function RealTimeRouteTable({
       </Table>
       {/* pagination */}
       <DataTablePagination table={table} />
-
     </div>
-  )
+  );
 }

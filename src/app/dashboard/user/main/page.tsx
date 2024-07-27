@@ -10,8 +10,8 @@ import { userExtractor } from "@/lib/utils/helpers";
 import { clsx } from "clsx";
 
 export default async function UserHome() {
-  const session = await auth()
-  const user = userExtractor(session)
+  const session = await auth();
+  const user = userExtractor(session);
   const liveData = [
     { heading: "Total Users", stats: 300000 },
     { heading: "MCQ Bank", stats: 5000000 },
@@ -31,8 +31,10 @@ export default async function UserHome() {
       </div>
       {user && user.subscription_type !== "perm" && (
         <section className="h-52 md:h-40 w-full flex justify-center items-center mt-3 md:mt-0">
-          <div className=" bg-white w-[95%] md:w-[98%] h-full rounded-3xl p-2 flex flex-col justify-center
-            items-center space-y-3">
+          <div
+            className=" bg-white w-[95%] md:w-[98%] h-full rounded-3xl p-2 flex flex-col justify-center
+            items-center space-y-3"
+          >
             <h3 className=" text-2xl md:text-3xl font-bold">Get Unlimited Access</h3>
             <div className="  w-[70%] text-center">
               <span className="font-bold ">{user.name}! </span>
@@ -65,5 +67,3 @@ export default async function UserHome() {
     </section>
   );
 }
-
-

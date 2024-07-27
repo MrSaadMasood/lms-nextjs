@@ -45,9 +45,9 @@ export const priceCardData = [
       "Access to all tests",
       "Pay as you go",
       "No expiration on tokens",
-      "24/7 customer support"
+      "24/7 customer support",
     ],
-    callToAction: "Buy Tokens"
+    callToAction: "Buy Tokens",
   },
   {
     heading: "Premium Ultra",
@@ -61,8 +61,8 @@ export const priceCardData = [
       "No recurring fees",
       "Priority support",
       "Exclusive content",
-      "Regular updates"
+      "Regular updates",
     ],
-    callToAction: "Unlimited Access"
-  }
-]
+    callToAction: "Unlimited Access",
+  },
+];

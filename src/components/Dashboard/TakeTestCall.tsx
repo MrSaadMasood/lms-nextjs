@@ -19,10 +19,7 @@ export default function TakeTestCall() {
         >
           Take you learning to the next level and Challenge yourself
         </h3>
-        <CallToActionButton
-          content="Take The Test"
-          link="/dashboard/user/test"
-        />
+        <CallToActionButton content="Take The Test" link="/dashboard/user/test" />
       </section>
     </ChartTemplate>
   );

@@ -4,9 +4,8 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow
-} from "@/components/ui/table"
-
+  TableRow,
+} from "@/components/ui/table";
 
 export default function TestResultTable() {
   return (
@@ -16,7 +15,7 @@ export default function TestResultTable() {
           <TableHead>Total MCQs</TableHead>
           <TableHead>Total Solved</TableHead>
           <TableHead>Total Correct</TableHead>
-          <TableHead className="text-right" >Total Wrong</TableHead>
+          <TableHead className="text-right">Total Wrong</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -24,9 +23,9 @@ export default function TestResultTable() {
           <TableCell className="font-medium">100</TableCell>
           <TableCell>70</TableCell>
           <TableCell>50</TableCell>
-          <TableCell >20</TableCell>
+          <TableCell>20</TableCell>
         </TableRow>
       </TableBody>
     </Table>
-  )
+  );
 }

@@ -1,38 +1,69 @@
-import COIN_DATA from "@/../COIN_DATA.json"
-import { ArcElement, BarElement, CategoryScale, Chart as ChartJS, ChartOptions, Filler, Legend, LineElement, LinearScale, Plugin, PointElement, Title, Tooltip, TooltipItem } from "chart.js";
-import zoomPlugin from 'chartjs-plugin-zoom';
+import COIN_DATA from "@/../COIN_DATA.json";
+import {
+  ArcElement,
+  BarElement,
+  CategoryScale,
+  Chart as ChartJS,
+  ChartOptions,
+  Filler,
+  Legend,
+  LineElement,
+  LinearScale,
+  Plugin,
+  PointElement,
+  Title,
+  Tooltip,
+  TooltipItem,
+} from "chart.js";
+import zoomPlugin from "chartjs-plugin-zoom";
 
 const customCanvasBackgroundColor: Plugin = {
   id: "customCanvasBackgroundColor",
   beforeDraw: (chart, args, options) => {
-    const { ctx, width, height } = chart
-    ctx.save()
-    ctx.globalCompositeOperation = "destination-over"
-    ctx.fillStyle = options.color || "white"
-    ctx.fillRect(0, 0, width, height)
-    ctx.restore()
-  }
-}
+    const { ctx, width, height } = chart;
+    ctx.save();
+    ctx.globalCompositeOperation = "destination-over";
+    ctx.fillStyle = options.color || "white";
+    ctx.fillRect(0, 0, width, height);
+    ctx.restore();
+  },
+};
 
 const verticalHoverLine: Plugin = {
   id: "verticalHoverLine",
   beforeDatasetDraw: (chart) => {
-    const { ctx, chartArea: { top, bottom } } = chart
-    ctx.save()
+    const {
+      ctx,
+      chartArea: { top, bottom },
+    } = chart;
+    ctx.save();
     chart.getDatasetMeta(0).data.forEach((dataPoint) => {
       if (dataPoint.active) {
-        ctx.beginPath()
-        ctx.strokeStyle = "gray"
-        ctx.moveTo(dataPoint.x, top)
-        ctx.lineTo(dataPoint.x, bottom)
-        ctx.stroke()
+        ctx.beginPath();
+        ctx.strokeStyle = "gray";
+        ctx.moveTo(dataPoint.x, top);
+        ctx.lineTo(dataPoint.x, bottom);
+        ctx.stroke();
       }
-    })
-  }
-}
+    });
+  },
+};
 
-ChartJS.register(BarElement, ArcElement, LineElement, CategoryScale, LinearScale, PointElement, Title, Tooltip, Legend, Filler, zoomPlugin, verticalHoverLine, customCanvasBackgroundColor);
-
+ChartJS.register(
+  BarElement,
+  ArcElement,
+  LineElement,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  Title,
+  Tooltip,
+  Legend,
+  Filler,
+  zoomPlugin,
+  verticalHoverLine,
+  customCanvasBackgroundColor,
+);
 
 export const lineChartOptions: ChartOptions<"line"> = {
   interaction: { intersect: false, mode: "index" as "index" },
@@ -63,16 +94,16 @@ export const lineChartOptions: ChartOptions<"line"> = {
     zoom: {
       pan: {
         enabled: true,
-        mode: "xy" as "xy"
+        mode: "xy" as "xy",
       },
       zoom: {
         wheel: {
-          enabled: true
+          enabled: true,
         },
         pinch: {
-          enabled: true
+          enabled: true,
         },
-      }
+      },
     },
     legend: {
       display: false,
@@ -81,20 +112,17 @@ export const lineChartOptions: ChartOptions<"line"> = {
     tooltip: {
       callbacks: {
         title(tooltipItems: TooltipItem<"line">[]) {
-          const dataIndex = tooltipItems[0].dataIndex as number
-          return new Date(COIN_DATA.prices[dataIndex][0]).toUTCString()
+          const dataIndex = tooltipItems[0].dataIndex as number;
+          return new Date(COIN_DATA.prices[dataIndex][0]).toUTCString();
         },
         label(tooltipItem: TooltipItem<"line">) {
-          const dataIndex = tooltipItem.dataIndex as number
-          return "Price: $" + COIN_DATA.prices[dataIndex][1].toFixed(4)
-        }
-      }
-    }
-
+          const dataIndex = tooltipItem.dataIndex as number;
+          return "Price: $" + COIN_DATA.prices[dataIndex][1].toFixed(4);
+        },
+      },
+    },
   },
 };
-
-
 
 export const barChartOptions: ChartOptions<"bar"> = {
   scales: {
@@ -130,4 +158,3 @@ export const barChartOptions: ChartOptions<"bar"> = {
     },
   },
 };
-
