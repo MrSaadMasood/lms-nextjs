@@ -1,44 +1,9 @@
 "use client";
 
-import { ArcElement, BarElement, Chart as ChartJS, Filler, Legend, Title, Tooltip } from "chart.js";
+import { barChartOptions } from "@/lib/variables/chartJs";
 import { Bar } from "react-chartjs-2";
-ChartJS.register(BarElement, Title, Tooltip, Legend, Filler, ArcElement);
 
 export default function BarChart() {
-  const options = {
-    scales: {
-      x: {
-        grid: {
-          drawOnChartArea: false,
-          drawTicks: false,
-        },
-        border: {
-          display: false,
-        },
-      },
-      y: {
-        grid: {
-          drawTicks: false,
-          color: "gray",
-          tickBorderDash: [1, 2],
-        },
-        border: {
-          display: false,
-          dash: [12, 12],
-          dashOffset: 40,
-        },
-
-        beginAtZero: true,
-      },
-    },
-    maintainAspectRatio: false,
-
-    plugins: {
-      legend: {
-        display: false,
-      },
-    },
-  };
   return (
     <Bar
       data={{
@@ -55,7 +20,7 @@ export default function BarChart() {
           },
         ],
       }}
-      options={options}
+      options={barChartOptions}
     />
   );
 }
