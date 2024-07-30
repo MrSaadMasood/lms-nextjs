@@ -1,11 +1,11 @@
 "use client";
 import { SessionProp } from "@/lib/types/exported-types";
 import { navbarLinkGenerator } from "@/lib/utils/helpers";
-import { authenticatedUserNavbarLinks } from "@/lib/variables/constants";
+import { authenticatedAdminNavBarLinks, authenticatedUserNavbarLinks } from "@/lib/variables/constants";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { v4 as uuid } from "uuid";
-import { userNavIcons } from "../componentConstants";
+import { adminNavIcons, userNavIcons } from "../componentConstants";
 
 export default function NavbarAuth({ session }: SessionProp) {
   console.log("the session inside the user is", session?.user.role);
@@ -34,6 +34,21 @@ export default function NavbarAuth({ session }: SessionProp) {
                 </li>
               );
             })}
+          {session.user.role === "admin" && adminNavIcons.map((obj, index) => {
+            const isActive = pathname.includes(authenticatedAdminNavBarLinks[index])
+            return (
+              <li key={uuid()}>
+                <Link
+                  href={navbarLinkGenerator(
+                    session.user.role,
+                    authenticatedAdminNavBarLinks[index],
+                  )}
+                >
+                  <obj.item size={20} color={isActive ? "black" : "gray"} />
+                </Link>
+              </li>
+            )
+          })}
         </ul>
       </section>
     </header>

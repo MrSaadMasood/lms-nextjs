@@ -32,7 +32,13 @@ export default function RealTimeVisualization() {
         Crypto Data Visualization
       </h2>
       <div className=" w-full p-3 h-auto flex flex-col justify-center items-center overflow-hidden">
-        {!params.has("coin") ? <RealTimeRouteTable showCoinChart={showCoinChart} /> : <CoinChart />}
+        {!params.has("coin") ?
+          <RealTimeRouteTable
+            showCoinChart={showCoinChart}
+            showDeleteButton={false}
+          /> :
+          <CoinChart />
+        }
       </div>
     </section>
   );

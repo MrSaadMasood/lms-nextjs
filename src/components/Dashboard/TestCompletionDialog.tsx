@@ -21,7 +21,6 @@ export default function TestCompletionDialog() {
   const dialogTriggerButton = useRef<HTMLButtonElement>(null);
 
   function routeToShowTestExplanation() {
-    console.log("the result is");
     const params = new URLSearchParams(searchParams);
     params.set("result", "true");
     router.replace(`${pathname}?${params.toString()}`);

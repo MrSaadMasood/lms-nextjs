@@ -1,6 +1,7 @@
 "use client";
 import { signOut } from "next-auth/react";
 import { usePathname } from "next/navigation";
+
 export default function LogoutButton({ css }: { css?: string }) {
   const style =
     css ||

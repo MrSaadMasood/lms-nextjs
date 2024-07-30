@@ -23,8 +23,7 @@ export function DataTableViewOptions<TData>({ table }: DataTableViewOptionsProps
       <DropdownMenuTrigger asChild>
         <Button
           variant="outline"
-          size="sm"
-          className="ml-auto hidden p-2 lg:flex lg:justify-center lg:items-center space-x-2 "
+          className="ml-auto bg-black text-white lg:flex lg:justify-center lg:items-center space-x-2 "
         >
           <div>View</div>
           <FaChevronDown />

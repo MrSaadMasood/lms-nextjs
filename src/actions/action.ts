@@ -20,6 +20,7 @@ export async function signInSignUpUser<T extends string>(
   const { email, password, username, loginMethod = "normal" } = data;
 
   if (type === "login") {
+    console.log("inside this admin login")
     await signIn("credentials", { email, password, role, redirectTo: "/" });
     return true;
   }

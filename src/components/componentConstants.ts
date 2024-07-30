@@ -8,3 +8,5 @@ export const userNavIcons = [
   { item: IoStatsChart, content: "Real-Time Data" },
   { item: IoPerson, content: "Account" },
 ];
+
+export const adminNavIcons = [userNavIcons[0], userNavIcons[1], userNavIcons[3]]

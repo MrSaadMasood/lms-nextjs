@@ -1,3 +1,9 @@
+export const liveData = [
+  { heading: "Total Users", stats: 300000 },
+  { heading: "MCQ Bank", stats: 5000000 },
+  { heading: "Active Users", stats: 3000 },
+  { heading: "MCQs Solved Today", stats: 3000 },
+];
 export const navbarLink = [
   { content: "Home", to: "/" },
   { content: "About", to: "/about" },
@@ -11,6 +17,11 @@ export const authLinksNavBar = [
 ];
 
 export const authenticatedUserNavbarLinks = ["/main", "/search", "/real-time", "/account"];
+export const authenticatedAdminNavBarLinks = [
+  authenticatedUserNavbarLinks[0],
+  authenticatedUserNavbarLinks[1],
+  authenticatedUserNavbarLinks[3]
+];
 
 export const variants = {
   hidden: { width: 0 },

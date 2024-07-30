@@ -1,15 +1,13 @@
 import COIN_DATA from "@/../COIN_DATA.json";
 
-import html2canvas from "html2canvas";
-import { jsPDF } from "jspdf";
 import { Button } from "@/components/ui/button";
 import { ChartTypeOptions, GeneralChartOptions } from "@/lib/types/exported-types";
 import { lineChartOptions } from "@/lib/variables/chartJs";
 import { Chart } from "chart.js";
 import { useRef, useState } from "react";
 import { Bar, Line } from "react-chartjs-2";
-import ChartControllerBar from "./ChartControllerBar";
 import { FaDownload } from "react-icons/fa";
+import ChartControllerBar from "./ChartControllerBar";
 
 function CoinChart() {
   const chartRef = useRef<Chart<"line", number[], string>>(null);

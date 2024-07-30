@@ -24,6 +24,8 @@ import mock_data from "../../../../MOCK_DATA.json";
 import { DataTableColumnHeader } from "./DataTableColumnHeadet";
 import DataTablePagination from "./DataTablePagination";
 import { DataTableViewOptions } from "./DataTableViewOptions";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/button";
 
 type Mock = {
   id: number;
@@ -37,6 +39,27 @@ type Mock = {
 
 const columnHelper = createColumnHelper<Mock>();
 const columns = [
+  columnHelper.display({
+    id: "select",
+    header: ({ table }) => (
+      <Checkbox
+        checked={
+          table.getIsAllPageRowsSelected() ||
+          (table.getIsSomePageRowsSelected() && "indeterminate")
+        }
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        aria-label="Select all"
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={value => row.toggleSelected(!!value)}
+        aria-label="Select Row"
+      />
+    )
+
+  }),
   columnHelper.accessor("first_name", {
     header: ({ column }) => <DataTableColumnHeader column={column} title="First Name" />,
   }),
@@ -50,8 +73,10 @@ const columns = [
 
 export default function RealTimeRouteTable({
   showCoinChart,
+  showDeleteButton
 }: {
-  showCoinChart: (id: string, value: string) => void;
+  showCoinChart: (id: string, value: string) => void,
+  showDeleteButton: boolean
 }) {
   const [data, setData] = useState<Mock[]>(mock_data);
   const [pagination, setPagination] = useState({
@@ -61,6 +86,7 @@ export default function RealTimeRouteTable({
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+  const [rowSelection, setRowSelection] = useState({})
 
   const table = useReactTable({
     data,
@@ -74,23 +100,28 @@ export default function RealTimeRouteTable({
       sorting,
       columnFilters,
       columnVisibility,
+      rowSelection,
     },
     onPaginationChange: setPagination,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
+    onRowSelectionChange: setRowSelection
   });
 
   return (
     <div className=" w-full p-2 rounded-2xl flex flex-col justify-center items-center bg-white overflow-hidden ">
-      <div className="w-full flex justify-between items-center py-4">
+      <div className="w-full flex flex-col md:flex-row justify-between items-center py-4 space-y-3">
         <Input
           placeholder="Filter Fist Names"
           value={table.getColumn("first_name")?.getFilterValue() as string}
           onChange={(e) => table.getColumn("first_name")?.setFilterValue(e.target.value)}
           className="max-w-sm"
         />
-        <DataTableViewOptions table={table} />
+        <div className=" w-full md:w-auto flex justify-between items-center   ">
+          {table.getIsSomeRowsSelected() && showDeleteButton && <Button>Delete</Button>}
+          <DataTableViewOptions table={table} />
+        </div>
       </div>
       {/* dropdown for visibility */}
 
