@@ -1,4 +1,5 @@
 import { Input } from "@/components/ui/input";
+import { HiDotsHorizontal } from "react-icons/hi";
 import {
   Table,
   TableBody,
@@ -19,13 +20,15 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import mock_data from "../../../../MOCK_DATA.json";
 import { DataTableColumnHeader } from "./DataTableColumnHeadet";
 import DataTablePagination from "./DataTablePagination";
 import { DataTableViewOptions } from "./DataTableViewOptions";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import Link from "next/link";
 
 type Mock = {
   id: number;
@@ -38,39 +41,6 @@ type Mock = {
 };
 
 const columnHelper = createColumnHelper<Mock>();
-const columns = [
-  columnHelper.display({
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={value => row.toggleSelected(!!value)}
-        aria-label="Select Row"
-      />
-    )
-
-  }),
-  columnHelper.accessor("first_name", {
-    header: ({ column }) => <DataTableColumnHeader column={column} title="First Name" />,
-  }),
-  columnHelper.accessor("date_of_birth", {
-    header: ({ column }) => <DataTableColumnHeader column={column} title="DOB" />,
-  }),
-  columnHelper.accessor("country", {
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Country" />,
-  }),
-];
-
 export default function RealTimeRouteTable({
   showCoinChart,
   showDeleteButton
@@ -78,6 +48,67 @@ export default function RealTimeRouteTable({
   showCoinChart: (id: string, value: string) => void,
   showDeleteButton: boolean
 }) {
+  const columns = useMemo(() => [
+    columnHelper.display({
+      id: "select",
+      header: ({ table }) => {
+        if (showDeleteButton) return (
+          <Checkbox
+            checked={
+              table.getIsAllPageRowsSelected() ||
+              (table.getIsSomePageRowsSelected() && "indeterminate")
+            }
+            onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+            aria-label="Select all"
+          />
+        )
+      },
+      cell: ({ row }) => {
+        if (showDeleteButton) return (
+          <Checkbox
+            checked={row.getIsSelected()}
+            onCheckedChange={value => row.toggleSelected(!!value)}
+            aria-label="Select Row"
+          />
+        )
+      }
+
+    }),
+    columnHelper.accessor("first_name", {
+      header: ({ column }) => <DataTableColumnHeader column={column} title="First Name" />,
+    }),
+    columnHelper.accessor("date_of_birth", {
+      header: ({ column }) => <DataTableColumnHeader column={column} title="DOB" />,
+    }),
+    columnHelper.accessor("country", {
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Country" />,
+    }),
+    columnHelper.display({
+      id: "action",
+      cell: ({ row, table, cell }) => {
+        if (!table.getIsSomeRowsSelected()) return (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">Open menu</span>
+                <HiDotsHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>
+                <Link href={`/dashboard/admin/edit/${row.original.id}`}>Edit</Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem>Delete</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )
+      }
+    })
+  ]
+    , [showDeleteButton])
+
   const [data, setData] = useState<Mock[]>(mock_data);
   const [pagination, setPagination] = useState({
     pageIndex: 0,

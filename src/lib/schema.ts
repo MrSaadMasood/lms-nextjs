@@ -20,3 +20,22 @@ export const nameSchema = z
   .max(50, {
     message: "Must have at most 100 characters",
   });
+
+export const char128StringSchema = z.string().min(1, {
+  message: "Must have at least 2 characters"
+}).max(128, {
+  message: "Must have at most 128 characters"
+})
+
+export const char300StringSchema = z.string().min(1, {
+  message: "Must have at least 2 characters"
+}).max(300, {
+  message: "Must have at most 300 characters"
+})
+
+export const char1000StringSchema = z.string().min(1, {
+  message: "Must have at least 2 characters"
+}).max(1000, {
+  message: "Must have at most 1000 characters"
+})
+

@@ -46,7 +46,6 @@ const frameworks = [
 export function Combobox() {
   const [open, setOpen] = useState(false)
   const [value, setValue] = useState("")
-  console.log("the open and value are", open, value)
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
