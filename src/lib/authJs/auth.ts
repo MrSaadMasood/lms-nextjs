@@ -13,7 +13,7 @@ import { custom, z } from "zod";
 import PostgresAdapter from '@auth/pg-adapter'
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
-  // adapter: PostgresAdapter(pool),
+  adapter: PostgresAdapter(pool),
   debug: true,
   session: {
     strategy: "jwt",
