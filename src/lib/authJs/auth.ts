@@ -1,4 +1,3 @@
-import { signInSignUpUser } from "@/actions/action";
 import bcrypt from "bcryptjs";
 import { randomUUID } from "crypto";
 import NextAuth from "next-auth";
@@ -7,8 +6,15 @@ import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
 import { getAdminQuery, getUserQuery } from "@/SQLqueries/queries";
 import { QueryResult } from "pg";
+import { signUp } from "@/actions/action";
+import { pool } from "../postgres/pgPool";
+import { sql } from "@vercel/postgres";
+import { custom, z } from "zod";
+import PostgresAdapter from '@auth/pg-adapter'
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
+  // adapter: PostgresAdapter(pool),
+  debug: true,
   session: {
     strategy: "jwt",
   },
@@ -21,18 +27,28 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         role: {},
       },
       async authorize(credentials) {
-        let customUser: QueryResult<RoleBasedUser>;
-        if (credentials.role === "admin") {
-          customUser = await getAdminQuery(credentials.email as string);
-        } else {
-          customUser = await getUserQuery(credentials.email as string);
+        const parsedCredentials = z.object({
+          email: z.string().email(),
+          password: z.string(),
+          role: z.string()
+        }).safeParse(credentials)
+        if (parsedCredentials.success) {
+          let customUser: QueryResult<RoleBasedUser> | null;
+          if (credentials.role === "admin") {
+            customUser = await getAdminQuery(credentials.email as string);
+          } else {
+            customUser = await getUserQuery(credentials.email as string);
+          }
+          if (!customUser) return null
+          const matchPassword = await bcrypt.compare(
+            credentials.password as string,
+            customUser.rows[0].password,
+          );
+          // if (!matchPassword) throw new Error("Failed to Login User");
+          if (!matchPassword) return null
+          return customUser.rows[0];
         }
-        const matchPassword = await bcrypt.compare(
-          credentials.password as string,
-          customUser.rows[0].password,
-        );
-        if (!matchPassword) throw new Error("Failed to Login User");
-        return customUser.rows[0];
+        return null
       },
     }),
   ],
@@ -47,6 +63,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         let customUser = user as RoleBasedUser;
         if (account?.provider === "google") {
           const googleUser = await getUserQuery(token.email!, "google");
+          // TODO: add google user if statement
+          if (!googleUser) throw new Error("failed to do something")
           if (!googleUser.rowCount) throw new Error("Failed to get the google user");
           customUser = googleUser.rows[0];
         }
@@ -83,10 +101,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     async signIn({ user, account }) {
       if (account?.provider === "google") {
         const userExists = await getUserQuery(user.email!, "google");
-        console.log("loggin the finding of google user");
-        if (!userExists.rowCount) {
-          const userCreated = await signInSignUpUser(
-            "signup",
+        console.log("the user exists is", userExists)
+        // TODO: added user exists
+        if (userExists && !userExists.rowCount) {
+          const userCreated = await signUp(
             {
               username: user.name!,
               email: user.email!,

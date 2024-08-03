@@ -1,5 +1,5 @@
 "use client";
-import { signInSignUpUser } from "@/actions/action";
+import { login, signUp } from "@/actions/action";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   Form,
@@ -45,12 +45,16 @@ export default function LoginSignupForm({ isAdminPage }: { isAdminPage: boolean 
   } = form;
 
   async function onSubmit(data: z.infer<typeof loginSignUpSchema>) {
-    const isSuccess = await signInSignUpUser(
-      isSignUpPage ? "signup" : "login",
-      data,
-      isAdminPage ? "admin" : "user",
-    );
-    if (isSignUpPage) {
+    const role = isAdminPage ? "admin" : "user"
+    if (!isSignUpPage) {
+      const success = await login(data.email, data.password, role)
+      if (!success) return errorToast("Authentication Failed")
+      router.push(`/dashboard/${role}/main`)
+    }
+
+    else {
+
+      const isSuccess = await signUp(data, role)
       if (!isSuccess) return errorToast("Authentication Failed");
       router.push(`/login?admin=${isAdminPage}`);
     }

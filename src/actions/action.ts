@@ -12,24 +12,31 @@ export async function signInToGoogle() {
   await signIn("google", { redirectTo: "/" });
 }
 
-export async function signInSignUpUser<T extends string>(
-  type: T,
+export async function login<T extends string>(
+  email: T,
+  password: T,
+  role: Roles,
+) {
+  console.log("inside the login function")
+  // try {
+  await signIn("credentials", { email, password, role, redirect: false });
+  return true
+  // } catch (error) {
+  //   console.log("error occured while signin", error)
+  //   return false
+
+  // }
+}
+
+export async function signUp<T extends string>(
   data: { email: T; password: T; username: T; loginMethod?: T },
   role: Roles,
 ) {
   const { email, password, username, loginMethod = "normal" } = data;
-
-  if (type === "login") {
-    console.log("inside this admin login")
-    await signIn("credentials", { email, password, role, redirectTo: "/" });
-    return true;
-  }
   try {
-    if (type !== "login") {
-      const hashedPassword = await bcrypt.hash(password, 10);
-      await signUpBasedOnRoleQuery(username, email, hashedPassword, loginMethod, role);
-      return true;
-    }
+    const hashedPassword = await bcrypt.hash(password, 10);
+    await signUpBasedOnRoleQuery(username, email, hashedPassword, loginMethod, role);
+    return true;
   } catch (error) {
     console.log("the error is", error);
     return false;

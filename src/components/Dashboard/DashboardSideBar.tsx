@@ -12,7 +12,6 @@ function DashBoardSideBar({
   session
 }: SessionProp) {
   const pathname = usePathname();
-  console.log("the side bar is being rendered")
   return (
     <DashboardLayoutTemplate>
       {session.user.role === "user" && userNavIcons.map((obj, index) => {

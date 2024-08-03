@@ -3,7 +3,7 @@ import { z } from "zod";
 const envSchema = z.object({
   AUTH_GOOGLE_SECRET: z.string(),
   AUTH_GOOGLE_ID: z.string(),
-  AUTH_URL: z.string(),
+  AUTH_URL: z.string().optional(),
   AUTH_SECRET: z.string(),
   EMAIL: z.string().email(),
   POSTGRES_URL: z.string().optional(),

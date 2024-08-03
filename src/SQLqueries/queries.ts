@@ -61,9 +61,15 @@ export async function resetPasswordQueries<T extends string>(
 }
 
 export async function getUserQuery(email: string, loginMethod = "normal") {
-  return await pool.sql<RoleBasedUser>`
+  try {
+    return await pool.sql<RoleBasedUser>`
     SELECT * FROM lms_users
     WHERE email = ${email} AND login_method = ${loginMethod};`;
+  } catch (error) {
+    console.log("error occured while getting the user from database", error)
+    return null
+
+  }
 }
 
 export async function getAdminQuery(email: string) {
