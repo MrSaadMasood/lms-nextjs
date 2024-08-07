@@ -45,7 +45,7 @@ function ResetPasswordForm({ isAdminPage }: { isAdminPage: boolean }) {
     const result = await updateUserPassword(
       token || "",
       data.newPassword,
-      isAdminPage ? "admin" : "user",
+      isAdminPage ? "ADMIN" : "USER",
     );
     if (!result) return errorToast("Password Update Failed");
     router.replace("/login");

@@ -1,14 +1,14 @@
 import { Session } from "next-auth";
 
-export function navbarLinkGenerator(type: Roles, toAdd: string) {
-  return `/dashboard/${type}${toAdd}`;
+export function navbarLinkGenerator(role: Roles, toAdd: string) {
+  return `/dashboard/${role.toLowerCase()}${toAdd}`;
 }
 
 export function userExtractor(session: Session | null) {
   if (!session) throw new Error("Autentication Error");
-  if (session.user.role === "user") return session.user;
+  if (session.user.role === "USER") return session.user;
 }
 export function adminExtractor(session: Session | null) {
   if (!session) throw new Error("Autentication Error");
-  if (session.user.role === "admin") return session.user;
+  if (session.user.role === "ADMIN") return session.user;
 }

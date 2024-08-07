@@ -45,18 +45,17 @@ export default function LoginSignupForm({ isAdminPage }: { isAdminPage: boolean 
   } = form;
 
   async function onSubmit(data: z.infer<typeof loginSignUpSchema>) {
-    const role = isAdminPage ? "admin" : "user"
+    const role = isAdminPage ? "ADMIN" : "USER"
     if (!isSignUpPage) {
       const success = await login(data.email, data.password, role)
       if (!success) return errorToast("Authentication Failed")
-      router.push(`/dashboard/${role}/main`)
+      router.push(`/dashboard/${role.toLowerCase()}/main`)
     }
-
     else {
-
       const isSuccess = await signUp(data, role)
+      console.log("the result of sign up is", isSuccess)
       if (!isSuccess) return errorToast("Authentication Failed");
-      router.push(`/login?admin=${isAdminPage}`);
+      router.push(`/login?${isAdminPage ? "admin=true" : ""}`);
     }
   }
   return (

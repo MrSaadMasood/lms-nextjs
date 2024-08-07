@@ -14,14 +14,14 @@ function DashBoardSideBar({
   const pathname = usePathname();
   return (
     <DashboardLayoutTemplate>
-      {session.user.role === "user" && userNavIcons.map((obj, index) => {
+      {session.user.role === "USER" && userNavIcons.map((obj, index) => {
         const Icon = obj.item;
         const isActive = pathname.includes(authenticatedUserNavbarLinks[index]);
         return (
           <DashboardSideBarLinks
             key={uuid()}
             uuid={uuid()}
-            href={navbarLinkGenerator("user", authenticatedUserNavbarLinks[index])}
+            href={navbarLinkGenerator("USER", authenticatedUserNavbarLinks[index])}
             isActive={isActive}
             content={obj.content}
           >
@@ -30,13 +30,13 @@ function DashBoardSideBar({
         );
       })}
 
-      {session.user.role === "admin" && adminNavIcons.map((obj, index) => {
+      {session.user.role === "ADMIN" && adminNavIcons.map((obj, index) => {
         const isActive = pathname.includes(authenticatedAdminNavBarLinks[index]);
         return (
           <DashboardSideBarLinks
             key={uuid()}
             uuid={uuid()}
-            href={navbarLinkGenerator("admin", authenticatedAdminNavBarLinks[index])}
+            href={navbarLinkGenerator("ADMIN", authenticatedAdminNavBarLinks[index])}
             isActive={isActive}
             content={obj.content}
           >

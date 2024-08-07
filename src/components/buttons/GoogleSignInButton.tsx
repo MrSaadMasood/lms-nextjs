@@ -1,11 +1,9 @@
 "use client";
 import { signInToGoogle } from "@/actions/action";
-import { useSession } from "next-auth/react";
 import { usePathname } from "next/navigation";
 import { FaGoogle } from "react-icons/fa";
+
 export default function GoogleSignInButton() {
-  const session = useSession();
-  console.log("the session is", session);
   const pathname = usePathname();
 
   if (pathname === "/signup") {

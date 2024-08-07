@@ -1,19 +1,14 @@
-import bcrypt from "bcryptjs";
+import { signUp } from "@/actions/action";
+import { getAdminQuery, getUserQuery } from "@/SQLqueries/queries";
+import { compare } from "bcryptjs";
 import { randomUUID } from "crypto";
-import NextAuth from "next-auth";
+import NextAuth, { AuthError } from "next-auth";
 import { JWT } from "next-auth/jwt";
 import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
-import { getAdminQuery, getUserQuery } from "@/SQLqueries/queries";
-import { QueryResult } from "pg";
-import { signUp } from "@/actions/action";
-import { pool } from "../postgres/pgPool";
-import { sql } from "@vercel/postgres";
-import { custom, z } from "zod";
-import PostgresAdapter from '@auth/pg-adapter'
+import { z } from "zod";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
-  adapter: PostgresAdapter(pool),
   debug: true,
   session: {
     strategy: "jwt",
@@ -33,22 +28,20 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           role: z.string()
         }).safeParse(credentials)
         if (parsedCredentials.success) {
-          let customUser: QueryResult<RoleBasedUser> | null;
-          if (credentials.role === "admin") {
-            customUser = await getAdminQuery(credentials.email as string);
+          let customUser: RoleBasedUser;
+          if (parsedCredentials.data.role === "ADMIN") {
+            customUser = (await getAdminQuery(parsedCredentials.data.email))[0] as AdminRole
           } else {
-            customUser = await getUserQuery(credentials.email as string);
+            customUser = (await getUserQuery(parsedCredentials.data.email))[0]
           }
-          if (!customUser) return null
-          const matchPassword = await bcrypt.compare(
-            credentials.password as string,
-            customUser.rows[0].password,
+          const matchPassword = await compare(
+            parsedCredentials.data.password,
+            customUser.password,
           );
-          // if (!matchPassword) throw new Error("Failed to Login User");
-          if (!matchPassword) return null
-          return customUser.rows[0];
+          if (!matchPassword) throw new Error("password match failed")
+          return customUser
         }
-        return null
+        else throw new AuthError("Input Validation Failed")
       },
     }),
   ],
@@ -62,13 +55,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       if (user) {
         let customUser = user as RoleBasedUser;
         if (account?.provider === "google") {
-          const googleUser = await getUserQuery(token.email!, "google");
-          // TODO: add google user if statement
-          if (!googleUser) throw new Error("failed to do something")
-          if (!googleUser.rowCount) throw new Error("Failed to get the google user");
-          customUser = googleUser.rows[0];
+          customUser = (await getUserQuery(user.email!, "GOOGLE"))[0]
         }
-        if (customUser.role === "admin") {
+        if (customUser.role === "ADMIN") {
           return {
             ...token,
             id: customUser.id,
@@ -79,8 +68,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         }
         return {
           ...token,
-          first_name: customUser.first_name,
-          last_name: customUser.last_name,
+          name: customUser.username,
           login_method: customUser.login_method,
           free_tokens: customUser.free_tokens,
           subscription_type: customUser.subscription_type,
@@ -99,21 +87,20 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       };
     },
     async signIn({ user, account }) {
-      if (account?.provider === "google") {
-        const userExists = await getUserQuery(user.email!, "google");
-        console.log("the user exists is", userExists)
+      if (user && account?.provider === "google") {
+        const userExists = (await getUserQuery(user.email!, "GOOGLE"))[0]
         // TODO: added user exists
-        if (userExists && !userExists.rowCount) {
+        if (!userExists) {
           const userCreated = await signUp(
             {
               username: user.name!,
               email: user.email!,
               password: user.id || randomUUID(),
-              loginMethod: "google",
+              loginMethod: "GOOGLE",
             },
-            "user",
+            "USER",
           );
-          if (!userCreated) return false;
+          if (!userCreated) throw new Error("new google user creation failed")
         }
       }
       return true;

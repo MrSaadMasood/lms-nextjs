@@ -18,7 +18,7 @@ export default async function UserHome() {
     <section className="bg-violet-700 w-screen md:w-full md:h-full h-screen  overflow-hidden overflow-y-scroll noScroll">
       <UserInfoHeader />
       <RealTimeDataCardDisplayer liveData={liveData} />
-      {user && user.subscription_type !== "perm" && (
+      {user && user.subscription_type !== "PERM" && (
         <section className="h-52 md:h-40 w-full flex justify-center items-center mt-3 md:mt-0">
           <div
             className=" bg-white w-[95%] md:w-[98%] h-full rounded-3xl p-2 flex flex-col justify-center

@@ -2,21 +2,22 @@ type RoleBasedUser = UserRole | AdminRole;
 
 interface UserRole {
   id: string;
-  first_name: string;
-  last_name: string;
+  username: string;
   email: string;
   password: string;
-  role: "user";
-  subscription_type: string;
-  free_tokens: string;
-  login_method: string;
+  role: "USER";
+  subscription_type: Subsctiption;
+  free_tokens: number;
+  login_method: LoginMethod;
 }
 interface AdminRole {
   id: string;
-  role: "admin";
+  role: "ADMIN";
   username: string;
   email: string;
   password: string;
 }
 
-type Roles = "admin" | "user";
+type Roles = "ADMIN" | "USER";
+type Subsctiption = "NONE" | "PERM" | "TEMP"
+type LoginMethod = "NORMAL" | "GOOGLE"
