@@ -1,7 +1,6 @@
 import { auth } from "@/lib/authJs/auth";
 
 export default auth((req) => {
-  console.log("the next origin url is", req.nextUrl.origin)
   if (!req.auth && req.nextUrl.pathname.startsWith("/dashboard"))
     return Response.redirect(new URL("/login", req.nextUrl.origin));
 
