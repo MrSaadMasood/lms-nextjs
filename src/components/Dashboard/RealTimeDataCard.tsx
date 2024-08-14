@@ -1,7 +1,7 @@
 import React from "react";
 import { FaUsers } from "react-icons/fa";
 
-function RealTimeDataCard({ heading, stats }: { heading: string; stats: number }) {
+function RealTimeDataCard<T extends string | number>({ heading, stats }: { heading: T; stats: T }) {
   return (
     <article
       className="bg-white rounded-3xl w-[90%] hover:bg-gray-200 duration-300 h-32 

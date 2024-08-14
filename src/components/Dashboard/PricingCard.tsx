@@ -1,4 +1,6 @@
+'use client'
 import { Button } from "@/components/ui/button";
+import { loadStripe } from '@stripe/stripe-js';
 import { FaArrowAltCircleRight } from "react-icons/fa";
 export default function PricingCard({
   heading,
@@ -8,11 +10,43 @@ export default function PricingCard({
   callToAction,
 }: {
   heading: string;
-  price: string;
+  price: number;
   desc: string;
   callToAction: string;
   list: string[];
 }) {
+  async function makeStripePayment() {
+    try {
+      const stripe = await loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!)
+
+      const response = await fetch("/api/user/stripe", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          heading,
+          price,
+          desc,
+          list
+        })
+      })
+
+      const session = await response.json()
+      console.log("the session is", session)
+      const result = await stripe?.redirectToCheckout({
+        sessionId: session.sessionId
+      })
+      if (result?.error) {
+        console.log("The stripe redirect to checkout failed")
+      }
+
+
+
+    } catch (error) {
+      console.log('some error occured while doing the strip checkout', error)
+    }
+  }
   return (
     <section
       className=" h-[80%] w-[97%] md:w-[40%] bg-white rounded-3xl  overflow-hidden
@@ -32,7 +66,7 @@ export default function PricingCard({
         <div className="w-[80%] h-full flexrow">{desc}</div>
       </div>
       <div className=" w-full h-[11%]  flexrow">
-        <Button className="bs-violet-700">{callToAction}</Button>
+        <Button onClick={makeStripePayment} className="bs-violet-700">{callToAction}</Button>
       </div>
       <ul className=" w-full h-full  p-2 flex flex-col justify-start items-center space-y-2">
         {list.map((explanation, index) => (
