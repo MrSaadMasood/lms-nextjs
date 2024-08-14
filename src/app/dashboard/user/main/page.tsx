@@ -1,58 +1,38 @@
-import BarChart from "@/components/Dashboard/BarChart";
-import CallToActionButton from "@/components/Dashboard/CallToActionButton";
-import ChartTemplate from "@/components/Dashboard/ChartTemplate";
-import PerformanceChart from "@/components/Dashboard/PerformanceChart";
-import RealTimeDataCard from "@/components/Dashboard/RealTimeDataCard";
 import RealTimeDataCardDisplayer from "@/components/Dashboard/RealTimeDataCardDisplayer";
-import TakeTestCall from "@/components/Dashboard/TakeTestCall";
 import { UserInfoHeader } from "@/components/Dashboard/UserInfoHeader";
+import UserSubscriptionCallToAction from "@/components/Dashboard/UserSubscriptionCallToAction";
 import { auth } from "@/lib/authJs/auth";
+import { PerformanceFilter, RealTimeCardInitialData } from "@/lib/types/exported-types";
 import { userExtractor } from "@/lib/utils/helpers";
-import { liveData } from "@/lib/variables/constants";
-import { clsx } from "clsx";
+import { realTimeCardInitialDataQuery } from "@/SQLqueries/userQueries";
+import UserDashboardCharts from "../../../../components/Dashboard/UserDashboardCharts";
+import { db } from "@/lib/drizzle";
+import { LmsUserStatsTable } from "@/lib/drizzle/schema";
+import { userStatData } from "@/lib/drizzle/seedData";
 
-export default async function UserHome() {
+export const dynamic = "force-dynamic";
+
+export default async function UserHome({ searchParams }:
+  {
+    searchParams:
+    { performance: PerformanceFilter }
+  }) {
+  const { performance } = searchParams
   const session = await auth();
   const user = userExtractor(session);
+  const realTimeCardInitialData =
+    (await realTimeCardInitialDataQuery(user.id, performance)).rows[0] as RealTimeCardInitialData<number>
+
   return (
-    <section className="bg-violet-700 w-screen md:w-full md:h-full h-screen  overflow-hidden overflow-y-scroll noScroll">
-      <UserInfoHeader />
-      <RealTimeDataCardDisplayer liveData={liveData} />
-      {user && user.subscription_type !== "PERM" && (
-        <section className="h-52 md:h-40 w-full flex justify-center items-center mt-3 md:mt-0">
-          <div
-            className=" bg-white w-[95%] md:w-[98%] h-full rounded-3xl p-2 flex flex-col justify-center
-            items-center space-y-3"
-          >
-            <h3 className=" text-2xl md:text-3xl font-bold">Get Unlimited Access</h3>
-            <div className="  w-[70%] text-center">
-              <span className="font-bold ">{user.name}! </span>
-              Buy Our <strong>One-Time Subscription</strong> and Enjoy Unlimited Access
-            </div>
-            <CallToActionButton content="Pricing" link="/dashboard/user/pricing" />
-          </div>
-        </section>
-      )}
-      <div className=" md:flex md:flex-row">
-        <TakeTestCall />
-        <PerformanceChart />
-      </div>
-      <div className=" md:flex md:flex-row md:flex-wrap">
-        {[1, 2, 3, 4].map((item, index) => (
-          <ChartTemplate
-            key={index}
-            heading="Hours Spent"
-            margin={clsx("h-[28rem]", index === 3 && "mb-20 md:mb-8")}
-          >
-            <section
-              className="bg-white w-[95%] h-[90%] p-2 overflow-hidden rounded-3xl flex flex-col
-            justify-center items-center"
-            >
-              <BarChart />
-            </section>
-          </ChartTemplate>
-        ))}
-      </div>
+    <section className="bg-violet-700 w-screen md:w-full md:h-full h-screen  
+      overflow-hidden overflow-y-scroll noScroll">
+      <UserInfoHeader user={user} />
+      <RealTimeDataCardDisplayer liveData={realTimeCardInitialData} />
+      <UserSubscriptionCallToAction user={user} />
+      <UserDashboardCharts
+        performance={realTimeCardInitialData.performance || 0}
+        user={user}
+      />
     </section>
   );
 }

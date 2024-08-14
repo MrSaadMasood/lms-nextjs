@@ -1,6 +1,6 @@
 import DashBoardSideBar from "@/components/Dashboard/DashboardSideBar";
+import NavbarAuth from "@/components/Navbar/NavbarAuth";
 import { auth } from "@/lib/authJs/auth";
-import { userExtractor } from "@/lib/utils/helpers";
 import Image from "next/image";
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -13,9 +13,12 @@ export default async function DashboardLayout({ children }: { children: React.Re
           <div className="text-4xl lg:text-5xl font-bold">Qafia</div>
           <Image width={60} height={60} src={"/lms-logo.png"} alt="logo" />
         </section>
-        {session && <DashBoardSideBar session={session} />}
+        <DashBoardSideBar session={session} />
       </aside>
-      <section className="h-full w-full md:w-[80%] ">{children}</section>
+      <NavbarAuth session={session} />
+      <section className="h-full w-full md:w-[80%] ">
+        {children}
+      </section>
     </div>
   );
 }
