@@ -1,6 +1,6 @@
 "use server";
 
-import { resetPasswordQueries, signUpBasedOnRoleQuery } from "@/SQLqueries/queries";
+import { resetPasswordQueries, signUpBasedOnRoleQuery } from "@/SQLqueries/authQueries";
 import ForgetPasswordTemplate from "@/components/EmailTemplate";
 import { signIn } from "@/lib/authJs/auth";
 import { AUTH_SECRET, EMAIL } from "@/lib/envValidator";
