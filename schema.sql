@@ -58,6 +58,9 @@ CREATE TABLE IF NOT EXISTS lms_user_stats (
     total_solved INT NOT NULL,
     total_correct INT NOT NULL,
     total_incorrect INT NOT NULL,
+    total_hard INT NOT NULL DEFAULT 0,
+    total_medium INT NOT NULL DEFAULT 0, 
+    total_easy INT NOT NULL DEFAULT 0,
     date DATE NOT NULL DEFAULT CURRENT_DATE
 );
 
