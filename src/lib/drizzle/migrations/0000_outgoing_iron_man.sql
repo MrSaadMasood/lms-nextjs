@@ -1,29 +1,29 @@
 DO $$ BEGIN
- CREATE TYPE "public"."correctOptionEnum" AS ENUM('A', 'B', 'C', 'D');
+ CREATE TYPE "public"."correct_option" AS ENUM('A', 'B', 'C', 'D');
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- CREATE TYPE "public"."difficultyEnum" AS ENUM('EASY', 'MEDIUM', 'HARD');
+ CREATE TYPE "public"."difficulty" AS ENUM('EASY', 'MEDIUM', 'HARD');
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- CREATE TYPE "public"."loginMethodEnum" AS ENUM('NORMAL', 'GOOGLE');
+ CREATE TYPE "public"."login_method" AS ENUM('NORMAL', 'GOOGLE');
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- CREATE TYPE "public"."subscriptionTypeEnum" AS ENUM('NONE', 'PERM', 'TEMP');
+ CREATE TYPE "public"."subscription_type" AS ENUM('NONE', 'PERM', 'TEMP');
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- CREATE TYPE "public"."userRole" AS ENUM('ADMIN', 'USER');
+ CREATE TYPE "public"."user_role" AS ENUM('ADMIN', 'USER');
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS "lms_academy" (
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "lms_admins" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"userRole" "userRole" DEFAULT 'ADMIN' NOT NULL,
+	"user_role" "user_role" DEFAULT 'ADMIN' NOT NULL,
 	"username" varchar(300) NOT NULL,
 	"password" varchar(300) NOT NULL,
 	"email" varchar(200) NOT NULL,
@@ -47,26 +47,30 @@ CREATE TABLE IF NOT EXISTS "lms_admins" (
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "lms_test_data" (
-	"id" uuid NOT NULL,
+	"id" serial PRIMARY KEY NOT NULL,
 	"subject" varchar(128) NOT NULL,
 	"paper_category" varchar(128) NOT NULL,
+	"academy_id" uuid NOT NULL,
 	"statement" text NOT NULL,
 	"option_a" text NOT NULL,
 	"option_b" text NOT NULL,
 	"option_c" text NOT NULL,
 	"option_d" text NOT NULL,
-	"correctOptionEnum" "correctOptionEnum" NOT NULL,
+	"correct_option" "correct_option" NOT NULL,
 	"explanation" varchar NOT NULL,
 	"paper_year" integer NOT NULL,
-	"difficultyEnum" "difficultyEnum" NOT NULL
+	"difficulty" "difficulty" NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "lms_user_stats" (
-	"userId" uuid NOT NULL,
+	"user_id" uuid NOT NULL,
 	"subject" varchar(128) NOT NULL,
 	"total_solved" integer NOT NULL,
-	"total_correct " integer NOT NULL,
-	"total_incorrect " integer NOT NULL,
+	"total_correct" integer NOT NULL,
+	"total_incorrect" integer NOT NULL,
+	"total_hard" integer NOT NULL,
+	"total_medium" integer NOT NULL,
+	"total_easy" integer NOT NULL,
 	"date" date DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
@@ -75,10 +79,10 @@ CREATE TABLE IF NOT EXISTS "lms_users" (
 	"username" varchar(300) NOT NULL,
 	"email" varchar(200) NOT NULL,
 	"password" varchar(300) NOT NULL,
-	"userRole" "userRole" DEFAULT 'USER' NOT NULL,
-	"subscriptionTypeEnum" "subscriptionTypeEnum" DEFAULT 'NONE' NOT NULL,
+	"user_role" "user_role" DEFAULT 'USER' NOT NULL,
+	"subscription_type" "subscription_type" DEFAULT 'NONE' NOT NULL,
 	"free_tokens" integer DEFAULT 300 NOT NULL,
-	"loginMethodEnum" "loginMethodEnum" DEFAULT 'NORMAL' NOT NULL,
+	"login_method" "login_method" DEFAULT 'NORMAL' NOT NULL,
 	CONSTRAINT "lms_users_username_unique" UNIQUE("username"),
 	CONSTRAINT "lms_users_email_unique" UNIQUE("email")
 );
@@ -90,13 +94,13 @@ EXCEPTION
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "lms_test_data" ADD CONSTRAINT "lms_test_data_id_lms_academy_id_fk" FOREIGN KEY ("id") REFERENCES "public"."lms_academy"("id") ON DELETE no action ON UPDATE no action;
+ ALTER TABLE "lms_test_data" ADD CONSTRAINT "lms_test_data_academy_id_lms_academy_id_fk" FOREIGN KEY ("academy_id") REFERENCES "public"."lms_academy"("id") ON DELETE no action ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "lms_user_stats" ADD CONSTRAINT "lms_user_stats_userId_lms_users_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."lms_users"("id") ON DELETE no action ON UPDATE no action;
+ ALTER TABLE "lms_user_stats" ADD CONSTRAINT "lms_user_stats_user_id_lms_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."lms_users"("id") ON DELETE no action ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;

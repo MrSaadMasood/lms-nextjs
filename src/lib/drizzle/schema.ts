@@ -1,25 +1,25 @@
 import { pgTable, uuid, varchar, integer, serial, text, date, pgEnum, index } from 'drizzle-orm/pg-core'
 
-export const userRole = pgEnum("userRole", ["ADMIN", "USER"])
-export const subscriptionTypeEnum = pgEnum("subscriptionTypeEnum", ["NONE", "PERM", "TEMP"])
-export const loginMethodEnum = pgEnum("loginMethodEnum", ["NORMAL", "GOOGLE"])
-export const correctOptionEnum = pgEnum("correctOptionEnum", ["A", "B", "C", "D"])
-export const difficultyEnum = pgEnum("difficultyEnum", ["EASY", "MEDIUM", "HARD"])
+export const userRole = pgEnum("user_role", ["ADMIN", "USER"])
+export const subscriptionTypeEnum = pgEnum("subscription_type", ["NONE", "PERM", "TEMP"])
+export const loginMethodEnum = pgEnum("login_method", ["NORMAL", "GOOGLE"])
+export const correctOptionEnum = pgEnum("correct_option", ["A", "B", "C", "D"])
+export const difficultyEnum = pgEnum("difficulty", ["EASY", "MEDIUM", "HARD"])
 
 export const LmsUsersTable = pgTable("lms_users", {
   id: uuid("id").primaryKey().defaultRandom(),
   username: varchar("username", { length: 300 }).notNull().unique(),
   email: varchar("email", { length: 200 }).notNull().unique(),
   password: varchar("password", { length: 300 }).notNull(),
-  role: userRole("userRole").notNull().default("USER"),
-  subscription_type: subscriptionTypeEnum("subscriptionTypeEnum").notNull().default("NONE"),
+  role: userRole("user_role").notNull().default("USER"),
+  subscription_type: subscriptionTypeEnum("subscription_type").notNull().default("NONE"),
   free_tokens: integer("free_tokens").notNull().default(300),
-  login_method: loginMethodEnum("loginMethodEnum").notNull().default("NORMAL")
+  login_method: loginMethodEnum("login_method").notNull().default("NORMAL")
 })
 
 export const LmsAdminsTable = pgTable("lms_admins", {
   id: uuid("id").primaryKey().defaultRandom(),
-  role: userRole("userRole").notNull().default("ADMIN"),
+  role: userRole("user_role").notNull().default("ADMIN"),
   username: varchar("username", { length: 300 }).notNull().unique(),
   password: varchar("password", { length: 300 }).notNull(),
   email: varchar("email", { length: 200 }).notNull().unique(),
@@ -42,10 +42,10 @@ export const LmsTestDataTable = pgTable("lms_test_data", {
   option_b: text("option_b").notNull(),
   option_c: text("option_c").notNull(),
   option_d: text("option_d").notNull(),
-  correct: correctOptionEnum("correctOptionEnum").notNull(),
+  correct: correctOptionEnum("correct_option").notNull(),
   explanation: varchar("explanation").notNull(),
   paper_year: integer("paper_year").notNull(),
-  difficulty: difficultyEnum("difficultyEnum").notNull()
+  difficulty: difficultyEnum("difficulty").notNull()
 }, (table) => {
   return {
     subjectIndex: index("subjectIndex").on(table.subject),
@@ -55,11 +55,14 @@ export const LmsTestDataTable = pgTable("lms_test_data", {
 })
 
 export const LmsUserStatsTable = pgTable("lms_user_stats", {
-  userId: uuid("userId").notNull().references(() => LmsUsersTable.id),
+  user_id: uuid("user_id").notNull().references(() => LmsUsersTable.id),
   subject: varchar("subject", { length: 128 }).notNull(),
   total_solved: integer("total_solved").notNull(),
-  total_correct: integer("total_correct ").notNull(),
-  total_incorrect: integer("total_incorrect ").notNull(),
+  total_correct: integer("total_correct").notNull(),
+  total_incorrect: integer("total_incorrect").notNull(),
+  total_hard: integer("total_hard").notNull(),
+  total_medium: integer("total_medium").notNull(),
+  total_easy: integer("total_easy").notNull(),
   date: date("date").notNull().defaultNow()
 }, (table) => {
   return {
