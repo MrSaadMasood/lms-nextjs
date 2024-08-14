@@ -1,5 +1,5 @@
 import { signUp } from "@/actions/action";
-import { getAdminQuery, getUserQuery } from "@/SQLqueries/queries";
+import { getAdminQuery, getUserQuery } from "@/SQLqueries/authQueries";
 import { compare } from "bcryptjs";
 import { randomUUID } from "crypto";
 import NextAuth, { AuthError } from "next-auth";
@@ -8,7 +8,7 @@ import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
 import { z } from "zod";
 
-export const { handlers, signIn, signOut, auth } = NextAuth({
+export const { handlers, signIn, signOut, auth, unstable_update } = NextAuth({
   debug: true,
   session: {
     strategy: "jwt",
@@ -51,7 +51,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     error: "/error",
   },
   callbacks: {
-    async jwt({ token, user, account }) {
+    async jwt({ token, user, account, session, trigger }) {
       if (user) {
         let customUser = user as RoleBasedUser;
         if (account?.provider === "google") {
@@ -68,7 +68,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         }
         return {
           ...token,
-          name: customUser.username,
+          username: customUser.username,
           login_method: customUser.login_method,
           free_tokens: customUser.free_tokens,
           subscription_type: customUser.subscription_type,
