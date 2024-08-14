@@ -3,6 +3,7 @@ import {
   ArcElement,
   BarElement,
   CategoryScale,
+  ChartData,
   Chart as ChartJS,
   ChartOptions,
   Filler,
@@ -17,6 +18,21 @@ import {
 } from "chart.js";
 import zoomPlugin from "chartjs-plugin-zoom";
 
+export const doughnutChartplugins: Plugin<"doughnut">[] = [
+  {
+    id: "gaugeInnerText",
+    afterDatasetsDraw(chart) {
+      const { ctx, data } = chart;
+      ctx.save()
+      const xCoordinates = chart.getDatasetMeta(0).data[0].x;
+      const yCoordindates = chart.getDatasetMeta(0).data[0].y;
+      ctx.fillStyle = "black";
+      ctx.font = "bold 2rem sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText(data.datasets[0].data[0].toString(), xCoordinates, yCoordindates);
+    },
+  },
+]
 const customCanvasBackgroundColor: Plugin = {
   id: "customCanvasBackgroundColor",
   beforeDraw: (chart, args, options) => {
@@ -64,6 +80,17 @@ ChartJS.register(
   verticalHoverLine,
   customCanvasBackgroundColor,
 );
+
+export const doughnutChartOptions: ChartOptions<"doughnut"> = {
+  responsive: true,
+  plugins: {
+    legend: {
+      display: false,
+    },
+  },
+  maintainAspectRatio: false,
+}
+
 
 export const lineChartOptions: ChartOptions<"line"> = {
   interaction: { intersect: false, mode: "index" as "index" },
@@ -158,3 +185,4 @@ export const barChartOptions: ChartOptions<"bar"> = {
     },
   },
 };
+

@@ -47,7 +47,7 @@ export const itemsVariants = {
 export const priceCardData = [
   {
     heading: "Token Pack",
-    price: "$300",
+    price: 300,
     desc: `Purchase tokens and enjoy complete
           access to tests as long as you have tokens in your account.
           Perfect for flexible usage tailored to your needs.`,
@@ -62,7 +62,7 @@ export const priceCardData = [
   },
   {
     heading: "Premium Ultra",
-    price: "$500",
+    price: 500,
     desc: `Experience the ultimate convenience with our Premium plan.
             Get lifetime access to all our services without any limitations.
             One-time purchase for unlimited, uninterrupted access forever.`,
@@ -77,3 +77,9 @@ export const priceCardData = [
     callToAction: "Unlimited Access",
   },
 ];
+
+export const dateAmPmFormater = new Intl.DateTimeFormat("en-Us", {
+  hour: "2-digit",
+  minute: "2-digit",
+  hour12: true
+})

@@ -11,3 +11,14 @@ type ChartTypeOptions = {
 };
 
 type GeneralChartOptions<Type extends "bar" | "line"> = ChartOptions<Type>;
+
+type RealTimeCardInitialData<T> = {
+  total_users: T,
+  total_mcq_bank: T,
+  total_mcq_solved: T,
+  performance?: T
+}
+
+type CardInitialData<T> = RealTimeCardInitialData<T> & { activeUsers: T }
+
+type PerformanceFilter = "weekly" | "monthly" | "yearly"
