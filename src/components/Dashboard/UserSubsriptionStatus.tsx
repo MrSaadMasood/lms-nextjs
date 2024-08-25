@@ -5,10 +5,10 @@ export default function UserSubscriptionStatus({
 }: {
   index: number;
   heading: string;
-  value: number | Subsctiption;
+  value: number | Subscription;
 }) {
 
-  function getMemberShipType(value: Subsctiption) {
+  function getMemberShipType(value: Subscription) {
     switch (value) {
       case "PERM":
         return "Premium"

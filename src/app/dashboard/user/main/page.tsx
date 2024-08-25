@@ -1,16 +1,12 @@
+import { realTimeCardInitialDataQuery } from "@/SQLqueries/userQueries";
 import RealTimeDataCardDisplayer from "@/components/Dashboard/RealTimeDataCardDisplayer";
 import { UserInfoHeader } from "@/components/Dashboard/UserInfoHeader";
 import UserSubscriptionCallToAction from "@/components/Dashboard/UserSubscriptionCallToAction";
 import { auth } from "@/lib/authJs/auth";
 import { PerformanceFilter, RealTimeCardInitialData } from "@/lib/types/exported-types";
-import { userExtractor } from "@/lib/utils/helpers";
-import { realTimeCardInitialDataQuery } from "@/SQLqueries/userQueries";
+import { userExtractor } from "@/lib/utils/serverHelpers";
 import UserDashboardCharts from "../../../../components/Dashboard/UserDashboardCharts";
-import { db } from "@/lib/drizzle";
-import { LmsUserStatsTable } from "@/lib/drizzle/schema";
-import { userStatData } from "@/lib/drizzle/seedData";
 
-export const dynamic = "force-dynamic";
 
 export default async function UserHome({ searchParams }:
   {
@@ -20,8 +16,14 @@ export default async function UserHome({ searchParams }:
   const { performance } = searchParams
   const session = await auth();
   const user = userExtractor(session);
-  const realTimeCardInitialData =
+  console.log("Th real time data is", user)
+  let realTimeCardInitialData =
     (await realTimeCardInitialDataQuery(user.id, performance)).rows[0] as RealTimeCardInitialData<number>
+  console.log("Th real time data is", realTimeCardInitialData)
+  user.subscription_type = realTimeCardInitialData.subscription_type;
+  user.free_tokens = realTimeCardInitialData.free_tokens
+  console.log("at the end", realTimeCardInitialData)
+
 
   return (
     <section className="bg-violet-700 w-screen md:w-full md:h-full h-screen  

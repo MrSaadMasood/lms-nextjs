@@ -1,6 +1,6 @@
 "use client";
 import { SessionProp } from "@/lib/types/exported-types";
-import { navbarLinkGenerator } from "@/lib/utils/helpers";
+import { navbarLinkGenerator } from "@/lib/utils/serverHelpers";
 import { authenticatedAdminNavBarLinks, authenticatedUserNavbarLinks } from "@/lib/variables/constants";
 import Link from "next/link";
 import { usePathname } from "next/navigation";

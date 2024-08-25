@@ -1,8 +1,7 @@
 import ChartTemplate from "@/components/Dashboard/ChartTemplate";
 import TakeTestCall from "@/components/Dashboard/TakeTestCall";
-import { accuracyChartDataGenerator, overallStatsChartDataGenerator, perSubjectDifficultyChartDataGenerator, weeklyActivityChartDataGenerator } from "@/lib/utils/helpers";
+import { accuracyChartDataGenerator, overallStatsChartDataGenerator, perSubjectDifficultyChartDataGenerator, weeklyActivityChartDataGenerator } from "@/lib/utils/serverHelpers";
 import { userDashboardBarChartPersonalizedData } from "@/SQLqueries/userQueries";
-import { ChartData } from "chart.js";
 import { clsx } from "clsx";
 import { randomUUID } from "crypto";
 import dynamic from 'next/dynamic';
@@ -14,8 +13,9 @@ export default async function UserDashboardCharts({ performance, user }: {
   performance: number,
   user: UserRole
 }) {
-  const [overallStats, accuracy, weeklyActivity, perSubjectDifficultyStats] =
+  const [accuracy, weeklyActivity, overallStats, perSubjectDifficultyStats] =
     await userDashboardBarChartPersonalizedData(user.id)
+  console.log("The perSubjectDifficultyStats", accuracy, weeklyActivity, perSubjectDifficultyStats, overallStats)
   const userDashboardPersonalData = [
     { heading: "Overall Stats", chartData: overallStatsChartDataGenerator(overallStats) },
     { heading: "Accuray", chartData: accuracyChartDataGenerator(accuracy.rows as AccuracyStats[]) },
@@ -29,7 +29,7 @@ export default async function UserDashboardCharts({ performance, user }: {
   return (
     <>
       <div className=" md:flex md:flex-row">
-        <TakeTestCall />
+        <TakeTestCall free_tokens={user.free_tokens} subscription_type={user.subscription_type} />
         <PerformanceChart performance={performance} />
       </div>
       <div className=" md:flex md:flex-row md:flex-wrap">

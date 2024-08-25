@@ -1,5 +1,5 @@
 "use client";
-import { navbarLinkGenerator } from "@/lib/utils/helpers";
+import { navbarLinkGenerator } from "@/lib/utils/serverHelpers";
 import { authenticatedAdminNavBarLinks, authenticatedUserNavbarLinks } from "@/lib/variables/constants";
 import { usePathname } from "next/navigation";
 import { adminNavIcons, userNavIcons } from "../componentConstants";
