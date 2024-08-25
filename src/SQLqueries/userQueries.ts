@@ -1,8 +1,9 @@
+import "server-only"
 import { db } from "@/lib/drizzle";
-import { LmsTestDataTable, LmsUsersTable, LmsUserStatsTable } from "@/lib/drizzle/schema";
-import { PerformanceFilter } from "@/lib/types/exported-types";
-import { getPreviousDate } from "@/lib/utils/helpers";
-import { eq, sql, sum } from "drizzle-orm";
+import { LmsAcademyTable, LmsAdminsTable, LmsTestDataTable, LmsUsersTable, LmsUserStatsTable } from "@/lib/drizzle/schema";
+import { PerformanceFilter, RealTimeCardInitialData } from "@/lib/types/exported-types";
+import { getPreviousDate } from "@/lib/utils/serverHelpers";
+import { asc, desc, eq, sql, sum } from "drizzle-orm";
 
 export async function realTimeCardInitialDataQuery(id: string, performance: PerformanceFilter) {
   const date = new Date()
@@ -15,8 +16,14 @@ export async function realTimeCardInitialDataQuery(id: string, performance: Perf
   //       user_id = ${id} AND 
   //       date >= ${new Date(getPreviousDate(performance, new Date())).toLocaleDateString()} AND
   //       date <= ${new Date().toLocaleDateString()})
+  //     (SELECT free_tokens 
+  //       FROM lms_users 
+  //       WHERE iid = ${id}) AS free_tokens,
+  //     (SELECT subscription_type 
+  //       FROM lms_users 
+  //       WHERE id = ${id}) AS subscription_type;
   //;
-  return db.execute(sql<{ name: string }[]>` 
+  return db.execute(sql<RealTimeCardInitialData<number>[]>` 
   SELECT 
     (SELECT COUNT(*) FROM ${LmsUsersTable}) AS total_users, 
     (SELECT COUNT(*) FROM  ${LmsTestDataTable}) AS total_mcq_bank, 
@@ -25,13 +32,19 @@ export async function realTimeCardInitialDataQuery(id: string, performance: Perf
       WHERE 
       user_id = ${id} AND 
       date >= ${new Date(getPreviousDate(performance, new Date())).toLocaleDateString()} AND
-      date <= ${new Date().toLocaleDateString()}
-)
+      date <= ${new Date().toLocaleDateString()}),
+    (SELECT free_tokens 
+     FROM lms_users 
+     WHERE id = ${id}) AS free_tokens,
+    (SELECT subscription_type 
+     FROM lms_users 
+     WHERE id = ${id}) AS subscription_type;
 `)
 
 }
 
 export async function userDashboardBarChartPersonalizedData(id: string) {
+  console.log("the user id in the personalized data is", id)
   // **overall stats**
   // SELECT 
   //     SUM(total_solved) AS total_solved, 
@@ -102,7 +115,7 @@ export async function userDashboardBarChartPersonalizedData(id: string) {
     FROM 
         lms_user_stats 
     WHERE 
-        user_id = 'f0fdf26b-0c91-4e37-ba50-ca91d46ab612' 
+        user_id = ${id} 
     GROUP BY 
         week_interval
     ORDER BY
@@ -133,5 +146,126 @@ export async function userDashboardBarChartPersonalizedData(id: string) {
     .where(eq(LmsUserStatsTable.user_id, id))
     .groupBy(LmsUserStatsTable.subject)
 
-  return Promise.all([overallStats, accuracy, weeklyActivity, perSubjectDifficultyStats])
+  return Promise.all([accuracy, weeklyActivity, overallStats, perSubjectDifficultyStats])
+}
+
+
+export async function updateUserSubscriptionAndToken(id: string, price: number) {
+  return db.execute(sql`
+    UPDATE lms_users 
+    SET 
+      subscription_type = ${price === 300 ? 'TEMP' : 'PERM'},
+      free_tokens = (
+            SELECT free_tokens 
+            FROM lms_users
+            WHERE id = ${id} 
+        ) + 500
+    WHERE 
+      id = ${id};
+`)
+}
+
+export async function getUserFromDatabase(email: string) {
+  return db.select({
+    username: LmsUsersTable.username,
+    login_method: LmsUsersTable.login_method,
+    free_tokens: LmsUsersTable.free_tokens,
+    subscription_type: LmsUsersTable.subscription_type,
+    id: LmsUsersTable.id,
+    role: LmsUsersTable.role,
+  }).from(LmsUsersTable)
+    .where(eq(LmsUsersTable.email, email))
+}
+
+export async function getTestSearchCategoryBasedInfo(category: TestSearchCategory) {
+  switch (category) {
+    case "academy":
+      console.log("inside the academy here")
+      // SELECT id, name FROM lms_academy;
+      return db.select({
+        id: LmsAcademyTable.id,
+        name: LmsAcademyTable.name
+      }).from(LmsAcademyTable)
+    case "exam":
+      // SELECT DISTINCT paper_category
+      // FROM lms_test_data;
+      return db.selectDistinct({
+        paper_category: LmsTestDataTable.paper_category
+      }).from(LmsTestDataTable)
+    default:
+      // SELECT DISTINCT subject FROM lms_test_data;
+      return db.selectDistinct({
+        subject: LmsTestDataTable.subject
+      }).from(LmsTestDataTable)
+  }
+}
+
+export async function examTestsOfferedByAcademy(academyId: string) {
+  // SELECT 
+  //     paper_category, 
+  //     paper_year 
+  // FROM 
+  //     lms_test_data 
+  // WHERE 
+  //     academy_id = ${academyId} 
+  // GROUP BY 
+  //     paper_category, 
+  //     paper_year 
+  // ORDER BY 
+  //     paper_category ASC, 
+  //     paper_year DESC;
+  //
+  return db.select({
+    paper_category: LmsTestDataTable.paper_category,
+    paper_year: LmsTestDataTable.paper_year
+  }).from(LmsTestDataTable).
+    where(eq(LmsTestDataTable.academy_id, academyId))
+    .groupBy(LmsTestDataTable.paper_category, LmsTestDataTable.paper_year)
+    .orderBy(asc(LmsTestDataTable.paper_category), desc(LmsTestDataTable.paper_year))
+}
+
+export async function subjectTestOfferedByAcademy(academyId: string) {
+  // SELECT 
+  //     subject, 
+  //     paper_year 
+  // FROM 
+  //     lms_test_data 
+  // WHERE 
+  //     academy_id = '3bfa9e12-be41-4e5b-bd8d-c6aa57ecdd33'
+  // GROUP BY 
+  //     subject, 
+  //     paper_year 
+  // ORDER BY 
+  //     subject ASC, 
+  //     paper_year DESC;
+  return db.select({
+    subject: LmsTestDataTable.subject,
+    paper_year: LmsTestDataTable.paper_year
+  }).from(LmsTestDataTable)
+    .where(eq(LmsTestDataTable.academy_id, academyId))
+    .groupBy(LmsTestDataTable.subject, LmsTestDataTable.paper_year)
+    .orderBy(asc(LmsTestDataTable.subject), desc(LmsTestDataTable.paper_year))
+}
+
+export async function subjectListPresentInExam(examName: string) {
+  // SELECT 
+  //     subject, 
+  //     paper_year 
+  // FROM 
+  //     lms_test_data 
+  // WHERE 
+  //     paper_category = 'IELTS' 
+  // GROUP BY 
+  //     subject, 
+  //     paper_year 
+  // ORDER BY 
+  //     subject ASC, 
+  //     paper_year DESC;
+  return db.select({
+    subject: LmsTestDataTable.subject,
+    paper_year: LmsTestDataTable.paper_year
+  }).from(LmsTestDataTable)
+    .where(eq(LmsTestDataTable.paper_category, examName))
+    .groupBy(LmsTestDataTable.subject, LmsTestDataTable.paper_year)
+    .orderBy(asc(LmsTestDataTable.subject), desc(LmsTestDataTable.paper_year))
 }
