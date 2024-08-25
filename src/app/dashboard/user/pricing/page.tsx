@@ -31,8 +31,8 @@ export default function Pricing() {
       >
         <div
           className=" w-[95%] h-full flex 
-          flex-col md:flex-row md:justify-around md:items-center
-          justify-start items-center space-y-4"
+          flex-col md:flex-row md:justify-around md:items-center 
+          justify-start items-center space-y-4 md:space-y-0 "
         >
           {priceCardData.map((cardData, index) => (
             <PricingCard
