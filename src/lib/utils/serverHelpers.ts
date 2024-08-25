@@ -1,7 +1,5 @@
-
 import { Session } from "next-auth";
 import { PerformanceFilter } from "../types/exported-types";
-import { ChartData } from "chart.js";
 
 export function navbarLinkGenerator(role: Roles, toAdd: string) {
   return `/dashboard/${role.toLowerCase()}${toAdd}`;
@@ -27,6 +25,8 @@ export function getPreviousDate(performance: PerformanceFilter, date: Date) {
 
   }
 }
+
+import { ChartData } from "chart.js";
 
 function barChartDatasetGenerator<T extends string>(
   label: T,
