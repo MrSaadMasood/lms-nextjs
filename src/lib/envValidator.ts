@@ -1,3 +1,4 @@
+import "server-only"
 import { z } from "zod";
 const envSchema = z.object({
   AUTH_GOOGLE_SECRET: z.string(),
@@ -7,8 +8,9 @@ const envSchema = z.object({
   EMAIL: z.string().email(),
   POSTGRES_URL: z.string().optional(),
   AUTH_TRUST_HOST: z.coerce.boolean(),
-  // NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string().min(1),
-  STRIPE_SECRET_KEY: z.string().min(1)
+  STRIPE_SECRET_KEY: z.string().min(1),
+  STRIPE_WEBHOOK_SECRET: z.string().min(1),
+  BASE_URL: z.string().url()
 });
 
 const env = envSchema.parse(process.env);
@@ -20,8 +22,9 @@ const {
   AUTH_GOOGLE_ID,
   POSTGRES_URL,
   AUTH_TRUST_HOST,
-  // NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
-  STRIPE_SECRET_KEY
+  STRIPE_SECRET_KEY,
+  STRIPE_WEBHOOK_SECRET,
+  BASE_URL
 } = env;
 
 export {
@@ -32,6 +35,7 @@ export {
   AUTH_URL,
   POSTGRES_URL,
   AUTH_TRUST_HOST,
-  // NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
-  STRIPE_SECRET_KEY
+  STRIPE_SECRET_KEY,
+  STRIPE_WEBHOOK_SECRET,
+  BASE_URL
 };

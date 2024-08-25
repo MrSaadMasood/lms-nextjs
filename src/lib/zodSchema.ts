@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+export const zodString = z.string()
+
 export const passwordSchema = z
   .string()
   .min(8, {
@@ -39,4 +41,12 @@ export const char1000StringSchema = z.string().min(1, {
   message: "Must have at most 1000 characters"
 })
 
-
+export const testSelectedOptionZodSchema = z.object({
+  category: z.union([z.literal("academy"), z.literal("exam"), z.literal("subject")]),
+  filter: zodString,
+  exam: zodString,
+  year: zodString,
+  subject: zodString,
+  academy: zodString,
+  academyId: zodString
+})
