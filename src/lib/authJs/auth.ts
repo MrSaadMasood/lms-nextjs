@@ -1,5 +1,6 @@
 import { signUp } from "@/actions/action";
 import { getAdminQuery, getUserQuery } from "@/SQLqueries/authQueries";
+import { getUserFromDatabase } from "@/SQLqueries/userQueries";
 import { compare } from "bcryptjs";
 import { randomUUID } from "crypto";
 import NextAuth, { AuthError } from "next-auth";
@@ -52,6 +53,10 @@ export const { handlers, signIn, signOut, auth, unstable_update } = NextAuth({
   },
   callbacks: {
     async jwt({ token, user, account, session, trigger }) {
+      if (trigger === "update" && session?.email as string) {
+        const updatedUser = (await getUserFromDatabase(session.email))[0]
+        return { ...token, ...updatedUser }
+      }
       if (user) {
         let customUser = user as RoleBasedUser;
         if (account?.provider === "google") {
