@@ -6,7 +6,7 @@ interface UserRole {
   email: string;
   password: string;
   role: "USER";
-  subscription_type: Subsctiption;
+  subscription_type: Subscription;
   free_tokens: number;
   login_method: LoginMethod;
 }
@@ -19,7 +19,7 @@ interface AdminRole {
 }
 
 type Roles = "ADMIN" | "USER";
-type Subsctiption = "NONE" | "PERM" | "TEMP"
+type Subscription = "NONE" | "PERM" | "TEMP"
 type LoginMethod = "NORMAL" | "GOOGLE"
 
 type OverStats = {
@@ -44,4 +44,43 @@ type PerSubjectDifficultyStat = {
   total_medium: number;
   total_easy: number;
   subject: string;
+}
+
+type ProjectBuyType = "Token Pack" | "Premium Ultra"
+
+type TestSearchCategory = "academy" | "exam" | "subject"
+
+type CategoryData = {
+  id: string;
+  name: string;
+  category?: "academy";
+} | {
+  paper_category: string;
+  category?: "exam";
+} | {
+  subject: string;
+  category?: "subject";
+}
+
+type SelectFormForTestOptions = {
+  placeholder: string,
+  type: TestSearchCategory | "year" | "filter",
+  condition: () => boolean,
+  list: string[]
+}
+type CategoryCorrespondingMappedObject = {
+  exam: SelectFormForTestOptions[],
+  subject: SelectFormForTestOptions[],
+  academy: SelectFormForTestOptions[]
+}
+
+
+type SelectedOptionsMap<T> = {
+  category: TestSearchCategory,
+  filter: T,
+  exam: T,
+  year: T,
+  subject: T,
+  academy: T,
+  academyId: T
 }

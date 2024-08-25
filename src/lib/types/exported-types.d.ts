@@ -16,9 +16,11 @@ type RealTimeCardInitialData<T> = {
   total_users: T,
   total_mcq_bank: T,
   total_mcq_solved: T,
-  performance?: T
+  performance?: T,
+  free_tokens: T,
+  subscription_type: Subscription
 }
 
-type CardInitialData<T> = RealTimeCardInitialData<T> & { activeUsers: T }
+type CardInitialData<T> = Omit<RealTimeCardInitialData<T>, "free_tokens" | "subscription_type"> & { activeUsers: T }
 
 type PerformanceFilter = "weekly" | "monthly" | "yearly"

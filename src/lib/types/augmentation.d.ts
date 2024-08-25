@@ -5,9 +5,9 @@ declare module "next-auth" {
   interface Session {
     user: RoleBasedUser & DefaultSession["user"];
   }
-  interface User extends RoleBasedUser {}
+  interface User extends RoleBasedUser { }
 }
 
 declare module "next-auth/jwt" {
-  interface JWT extends RoleBasedUser {}
+  interface JWT extends RoleBasedUser { }
 }
