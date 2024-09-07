@@ -64,10 +64,13 @@ type CategoryData = {
 
 type SelectFormForTestOptions = {
   placeholder: string,
-  type: TestSearchCategory | "year" | "filter",
-  condition: () => boolean,
+  type: ExtendedTestFilters,
+  showOptionsForForm: boolean,
   list: string[]
 }
+
+type ExtendedTestFilters = TestSearchCategory | "year" | "filter"
+
 type CategoryCorrespondingMappedObject = {
   exam: SelectFormForTestOptions[],
   subject: SelectFormForTestOptions[],
@@ -77,10 +80,29 @@ type CategoryCorrespondingMappedObject = {
 
 type SelectedOptionsMap<T> = {
   category: TestSearchCategory,
-  filter: T,
+  filter: TestFilterByOptions,
   exam: T,
   year: T,
   subject: T,
   academy: T,
   academyId: T
+}
+
+type DataForTestFiltering = {
+  examList: { paper_category: string, paper_year: number }[],
+  subjectList: { subject: string, paper_year: number }[],
+  academyList: { academy_name: string, paper_year: number }[]
+  yearList: { paper_year: number }[]
+}
+
+type TestFilterByOptions = "Academy" | "Subject" | "Exam" | "Year"
+
+type BooleanOptionsForYearList = {
+  subjectChoosenAfterFilterExist: boolean,
+  examChoosenAfterFilterExist: boolean,
+  academyChoosenAfterFilterExist: boolean,
+  isSubjectFilterSelected: boolean,
+  isExamFilterSelected: boolean,
+  isAcademyFilterSelected: boolean,
+  isYearFilterSelected: boolean,
 }
