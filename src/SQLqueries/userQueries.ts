@@ -3,7 +3,8 @@ import { db } from "@/lib/drizzle";
 import { LmsAcademyTable, LmsAdminsTable, LmsTestDataTable, LmsUsersTable, LmsUserStatsTable } from "@/lib/drizzle/schema";
 import { PerformanceFilter, RealTimeCardInitialData } from "@/lib/types/exported-types";
 import { getPreviousDate } from "@/lib/utils/serverHelpers";
-import { asc, desc, eq, sql, sum } from "drizzle-orm";
+import { asc, desc, eq, ilike, or, SQL, sql, sum } from "drizzle-orm";
+import { LucideMessageCircleDashed } from "lucide-react";
 
 export async function realTimeCardInitialDataQuery(id: string, performance: PerformanceFilter) {
   const date = new Date()
@@ -177,26 +178,29 @@ export async function getUserFromDatabase(email: string) {
     .where(eq(LmsUsersTable.email, email))
 }
 
-export async function getTestSearchCategoryBasedInfo(category: TestSearchCategory) {
+export async function getTestSearchCategoryBasedInfo(category: TestSearchCategory, discover: string | null) {
   switch (category) {
     case "academy":
-      console.log("inside the academy here")
-      // SELECT id, name FROM lms_academy;
+      // SELECT id, name FROM lms_academy WHERE name ILIKE '%${discover}%';
       return db.select({
         id: LmsAcademyTable.id,
         name: LmsAcademyTable.name
       }).from(LmsAcademyTable)
+        .where(ilike(LmsAcademyTable.name, `%${discover}%`))
     case "exam":
       // SELECT DISTINCT paper_category
-      // FROM lms_test_data;
+      // FROM lms_test_data WHERE paper_category ILIKE '%${discover}%';
       return db.selectDistinct({
         paper_category: LmsTestDataTable.paper_category
-      }).from(LmsTestDataTable)
+      })
+        .from(LmsTestDataTable)
+        .where(ilike(LmsTestDataTable.paper_category, `%${discover}%`))
     default:
-      // SELECT DISTINCT subject FROM lms_test_data;
+      // SELECT DISTINCT subject FROM lms_test_data WHERE subject ILIKE '%${discover}%';
       return db.selectDistinct({
         subject: LmsTestDataTable.subject
       }).from(LmsTestDataTable)
+        .where(ilike(LmsTestDataTable.subject, `%${discover}%`))
   }
 }
 
@@ -268,4 +272,68 @@ export async function subjectListPresentInExam(examName: string) {
     .where(eq(LmsTestDataTable.paper_category, examName))
     .groupBy(LmsTestDataTable.subject, LmsTestDataTable.paper_year)
     .orderBy(asc(LmsTestDataTable.subject), desc(LmsTestDataTable.paper_year))
+}
+
+export async function academiesThatOfferSubject(subject: string) {
+  // SELECT 
+  //     lms_test_data.paper_year, 
+  //     lms_academy.name 
+  // FROM 
+  //     lms_academy 
+  // INNER JOIN 
+  //     lms_test_data 
+  // ON 
+  //     lms_academy.id = lms_test_data.academy_id 
+  // WHERE 
+  //     subject = ${subject} 
+  // GROUP BY 
+  //     lms_test_data.paper_year, 
+  //     lms_academy.name 
+  // ORDER BY 
+  //     lms_test_data.name ASC, 
+  //     lms_academy.name DESC;
+  return db.select({
+    academy_name: LmsAcademyTable.name,
+    paper_year: LmsTestDataTable.paper_year
+  }).from(LmsAcademyTable)
+    .innerJoin(LmsTestDataTable, eq(LmsAcademyTable.id, LmsTestDataTable.academy_id))
+    .where(eq(LmsTestDataTable.subject, subject))
+    .groupBy(LmsAcademyTable.name, LmsTestDataTable.paper_year)
+    .orderBy(asc(LmsAcademyTable.name), desc(LmsTestDataTable.paper_year))
+}
+
+export async function paperYearListOfSubjectFromAllAcademies(subject: string) {
+  // SELECT DISTINCT 
+  //     paper_year 
+  // FROM 
+  //     lms_test_data 
+  // WHERE 
+  //     subject = ${paper_year} 
+  // ORDER BY 
+  //     paper_year DESC;
+  return db.selectDistinct({
+    paper_year: LmsTestDataTable.paper_year
+  }).from(LmsTestDataTable)
+    .where(eq(LmsTestDataTable.subject, subject))
+    .orderBy(desc(LmsTestDataTable.paper_year))
+}
+
+export async function deductTokensFromUserForTest(id: string) {
+  // BEGIN TRANSACTION;
+  //
+  // UPDATE lms_users
+  // SET free_tokens = free_tokens - 100
+  // WHERE id = ${id};
+  //
+  // COMMIT TRANSACTION;
+  // ROLLBACK TRANSACTION;
+  return db.transaction(async (tx) => {
+    try {
+      await tx.update(LmsUsersTable)
+        .set({ free_tokens: sql`${LmsUsersTable.free_tokens} - 100` })
+        .where(eq(LmsUsersTable.id, id));
+    } catch (error) {
+      tx.rollback()
+    }
+  })
 }
