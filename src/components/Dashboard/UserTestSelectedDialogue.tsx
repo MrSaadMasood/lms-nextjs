@@ -1,3 +1,4 @@
+import useToaster from "@/hooks/useToaster";
 import {
   Dialog,
   DialogContent,
@@ -9,55 +10,42 @@ import {
 } from "@/components/ui/dialog";
 
 import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
-import { v4 as uuid } from 'uuid';
 import SelectForm from "./SelectForm";
-import useToaster from "@/hooks/useToaster";
+import useTestSelection from "@/hooks/useTestSelection";
+import { v4 as uuid } from 'uuid';
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { deductFreeTokensFromUserRequest } from "@/fetchRequests/fetch";
 
 export default function UserTestSelectedDialogue({
   title,
   category,
   academyId,
-  // selectedOption,
-  // changeValue
+  user
 }: {
   academyId: string,
   title: string;
-  category: TestSearchCategory;
-  // selectedOption: SelectedOptionsMap<string>
-  // changeValue: (type: string, value: string) => void
+  category: TestSearchCategory,
+  user: UserRole
 }) {
-  const [selectedOption, setSelectedOption] = useState<SelectedOptionsMap<string>>({
-    category,
-    filter: "",
-    exam: "",
-    year: "",
-    subject: "",
-    academy: "",
-    academyId
-  });
-  console.log("The selected Options is", selectedOption)
-  const [fetchedDataForTestFiltering, setFetchedDataForTestFiltering] = useState({
-    examList: [],
-    subjectList: [],
-    academyList: [],
-    yearList: [],
-  })
+
+
   const [openDialog, setOpenDialog] = useState(false)
-  const isAcademySelected = category === "academy"
-  const isSubjectSelected = category === "subject"
-  const isExamSelected = category === "exam"
-  const router = useRouter();
+  const router = useRouter()
   const { errorToast } = useToaster()
-
-  const changeValue = useCallback((value: string, type: string,) => {
-    setSelectedOption((prev) => ({
-      ...prev,
-      [type]: type === "year" ? parseInt(value) : value.toLowerCase(),
-    }));
-
-  }, [])
+  const {
+    categoryCorrespondingMappedObject,
+    stopUserIfIncompleteOptionsSelected,
+    createParamsForTestPageNavigation,
+    selectedOption,
+    changeValue
+  } = useTestSelection({
+    academyId,
+    category,
+    errorToast
+  })
+  const isPermanentUser = user.subscription_type === "PERM"
+  const shouldRecharge = user.free_tokens === 0
 
   useEffect(() => {
     if (openDialog) {
@@ -65,132 +53,28 @@ export default function UserTestSelectedDialogue({
     }
   }, [category, title, openDialog, changeValue])
 
-  useEffect(() => {
-    async function getCategorySpecificDataForFurtherFiltering() {
-      try {
-        const response = await fetch("/api/user/dashboard/search", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(selectedOption)
-        })
-        if (!response.ok) throw new Error(response.statusText);
-        const data = await response.json();
-        setFetchedDataForTestFiltering(data)
-      } catch (error) {
-        console.log('the error occured while getting further data for test filteration', error)
-        errorToast("Failed To Get Further Filter Options")
-      }
+  async function redirectToTestOrRechargePage() {
+    if (shouldRecharge) {
+      return router.push("/dashboard/user/pricing")
     }
-
-    if ((isAcademySelected || isSubjectSelected) && !selectedOption.filter) return
-    getCategorySpecificDataForFurtherFiltering()
-
-  }, [selectedOption.filter])
-
-
-  const examList = ["IELTS", "CSS"];
-  const subjectList = ["English", "Chemistry"];
-  const academyItems = ["British", "nonBritiths"]
-  const yearItems = ["2011", "2022"]
-
-
-  const categoryCorrespondingMappedObject: CategoryCorrespondingMappedObject = {
-    exam: [
-      {
-        placeholder: "Choose a Subject",
-        type: "subject",
-        list: subjectList,
-        condition: showSubjectSelectionOptions,
-
-      },
-      {
-        placeholder: "Choose a Year",
-        type: "year",
-        list: yearItems,
-        condition: showYearSelectionOptions
+    else if (stopUserIfIncompleteOptionsSelected())
+      errorToast("You Must Select At Least One Filter Option")
+    else {
+      try {
+        const response = await deductFreeTokensFromUserRequest()
+        const data = await response.json()
+        if (response.status === 401) throw new Error
+        if (response.status === 402) return errorToast(data)
+      } catch (error) {
+        console.log("the error is", error)
+        return errorToast("Internal Server Error")
       }
-    ],
-    subject: [
-      {
-        placeholder: "Filter By",
-        type: "filter",
-        list: ["Academy", "Year"],
-        condition: showOptionsWhenSelectedCategoryIsSubject
-      },
-      {
-        placeholder: "Choose an Academy",
-        type: "academy",
-        list: academyItems,
-        condition: showAcademySelectionOptions
-      },
-      {
-        placeholder: "Filter By Year",
-        type: "year",
-        condition: showYearSelectionOptions,
-        list: yearItems
-      },
-    ],
-    academy: [
-      {
-        placeholder: "Filter By",
-        type: "filter",
-        condition: () => category === "academy",
-        list: ["Exam", "Subject"]
-      },
-      {
-        placeholder: "Choose an Exam",
-        type: "exam",
-        condition: showExamSelectionOptions,
-        list: examList
-      },
-      {
-        placeholder: "Choose a Subject",
-        type: "subject",
-        list: subjectList,
-        condition: showSubjectSelectionOptions,
-      },
-      {
-        placeholder: "Filter By Year",
-        type: "year",
-        condition: showYearSelectionOptions,
-        list: yearItems
-      }
-    ],
-
+      router.push(
+        `/dashboard/user/test` + '?' + createParamsForTestPageNavigation()
+      );
+    }
   }
 
-  function redirectToTestPage() {
-    router.push(
-      `/dashboard/user/test?academy=${selectedOption.academy}&exam=${selectedOption.exam}&subject=${selectedOption.subject}&year=${selectedOption.year}`,
-    );
-  }
-
-  function showExamSelectionOptions() {
-    if (isExamSelected || selectedOption.filter === "exam") return true
-    else return false
-  }
-
-  function showYearSelectionOptions() {
-    if (selectedOption.filter || isExamSelected) return true
-    else return false
-  }
-
-  function showSubjectSelectionOptions() {
-    if (selectedOption.filter === "subject" || isExamSelected) return true
-    else return false
-  }
-
-  function showOptionsWhenSelectedCategoryIsSubject() {
-    if (isSubjectSelected) return true
-    else return false
-  }
-
-  function showAcademySelectionOptions() {
-    if (isSubjectSelected && selectedOption.filter === "academy") return true
-    return false
-  }
 
   return (
     <Dialog open={openDialog} onOpenChange={setOpenDialog} >
@@ -206,7 +90,6 @@ export default function UserTestSelectedDialogue({
         </Button>
       </DialogTrigger>
 
-
       {/* content */}
       <DialogContent className="w-[90%] h-auto duration-300 rounded-2xl">
         <DialogHeader>
@@ -216,8 +99,8 @@ export default function UserTestSelectedDialogue({
           </DialogDescription>
         </DialogHeader>
         {categoryCorrespondingMappedObject[category].map(
-          ({ placeholder, type, condition, list }) => {
-            if (condition()) return (
+          ({ placeholder, type, showOptionsForForm, list }) => {
+            if (showOptionsForForm) return (
               <SelectForm
                 key={uuid()}
                 placeholder={placeholder}
@@ -228,11 +111,21 @@ export default function UserTestSelectedDialogue({
               />
             )
           })}
-
+        {!isPermanentUser && !shouldRecharge && (
+          <div
+            className=" text-xs text-red-700 "> * 100 tokens will be deduced from your account for each test.
+          </div>
+        )}
+        {!isPermanentUser && shouldRecharge && (
+          <div className=" text-xs text-red-700 ">Kindly Recharge Your Tokens</div>
+        )}
         <DialogFooter>
-          <Button onClick={() => redirectToTestPage()}>Start Test</Button>
+          <Button
+            onClick={() => redirectToTestOrRechargePage()}>
+            {shouldRecharge ? "Recharge" : "Start Test"}
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog >
   );
-}
+} 

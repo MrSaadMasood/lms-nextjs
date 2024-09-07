@@ -28,7 +28,7 @@ export default function TakeTestCall({
         {(!["PERM"].includes(subscription_type) && free_tokens === 0) ? (
           <CallToActionButton content="Recharge Please!" link="/dashboard/user/pricing" />
         ) : (
-          <CallToActionButton content="Take The Test" link={`/dashboard/user/search?category=academy&filterBy=&subject=&exam=&year=&academy=`} />
+          <CallToActionButton content="Take The Test" link={`/dashboard/user/search?category=academy`} />
         )}
       </section>
     </ChartTemplate>

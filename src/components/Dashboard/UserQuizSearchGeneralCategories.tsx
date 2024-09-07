@@ -11,6 +11,7 @@ function UserQuizSearchGeneralCategories() {
 
   function addParamsSearchCategory(index: number) {
     params.set("category", searchCategories[index].toLowerCase())
+    params.set("discover", "");
     router.replace(`${pathname}?${params}`)
   }
 

@@ -1,14 +1,13 @@
 
-import { Input } from "@/components/ui/input";
 import { FaSearch } from "react-icons/fa";
+import DebouncedInputForTestSearching from "./DebouncedInputForTestSearching";
 import { TestSearchCategoriesAndSelectionFilters } from "./TestSearchCategoriesAndSelectionFilters";
 
-function SearchPage({ categoryData, category }: {
+function SearchPage({ categoryData, category, discover }: {
   categoryData: CategoryData[],
-  category: TestSearchCategory
+  category: TestSearchCategory,
+  discover: string
 }) {
-
-
   return (
     <section
       className=" bg-violet-700 w-screen md:w-full md:h-full h-screen
@@ -23,7 +22,7 @@ function SearchPage({ categoryData, category }: {
       {/* input */}
       <div className="  w-full h-16 flex justify-center items-center">
         <div className="relative ">
-          <Input className=" bg-violet-300 pl-9" max={100} type="text" />
+          <DebouncedInputForTestSearching discover={discover} />
           <div className="absolute top-1/2 left-2 translateY ">
             <FaSearch size={20} />
           </div>
