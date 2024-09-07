@@ -45,8 +45,16 @@ export const testSelectedOptionZodSchema = z.object({
   category: z.union([z.literal("academy"), z.literal("exam"), z.literal("subject")]),
   filter: zodString,
   exam: zodString,
-  year: zodString,
   subject: zodString,
-  academy: zodString,
   academyId: zodString
 })
+
+const paperYearSchema = z.object({
+  paper_year: z.number()
+})
+export const dataForTestFilteringSchema = z.object({
+  examList: z.array(z.object({ paper_category: zodString }).merge(paperYearSchema)),
+  subjectList: z.array(z.object({ subject: zodString }).merge(paperYearSchema)),
+  academyList: z.array(z.object({ academy_name: zodString }).merge(paperYearSchema)),
+  yearList: z.array(paperYearSchema),
+}) 
