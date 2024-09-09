@@ -2,7 +2,6 @@ import { signUp } from "@/actions/action";
 import { getAdminQuery, getUserQuery } from "@/SQLqueries/authQueries";
 import { getUserFromDatabase } from "@/SQLqueries/userQueries";
 import { compare } from "bcryptjs";
-import { randomUUID } from "crypto";
 import NextAuth, { AuthError } from "next-auth";
 import { JWT } from "next-auth/jwt";
 import Credentials from "next-auth/providers/credentials";
@@ -100,7 +99,7 @@ export const { handlers, signIn, signOut, auth, unstable_update } = NextAuth({
             {
               username: user.name!,
               email: user.email!,
-              password: user.id || randomUUID(),
+              password: user.id || crypto.randomUUID(),
               loginMethod: "GOOGLE",
             },
             "USER",
