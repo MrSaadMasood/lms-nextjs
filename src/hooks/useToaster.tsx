@@ -1,25 +1,32 @@
-import { useToast } from '@/components/ui/use-toast'
+'use client'
+import { useToast } from "@/components/ui/use-toast";
+import { useCallback } from "react";
 
 function useToaster() {
-  const { toast } = useToast()
+  const { toast } = useToast();
 
-  function errorToast(message: string) {
+
+  const errorToast = useCallback((message: string) => {
     toast({
       description: message,
       variant: "destructive",
-      className: "bg-red-700 text-white rounded-lg font-bold"
-    })
-  }
+      className: "bg-red-700 text-white rounded-lg font-bold",
+    });
+  }, [])
 
-  function normalToast(message: string) {
-    toast({
-      description: message
-    })
-  }
+  const normalToast = useCallback(
+    (message: string) => {
+      toast({
+        description: message,
+      });
+    },
+    [],
+  )
+
   return {
     errorToast,
-    normalToast
-  }
+    normalToast,
+  };
 }
 
-export default useToaster
+export default useToaster;

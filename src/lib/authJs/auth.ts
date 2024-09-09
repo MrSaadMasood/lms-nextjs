@@ -1,16 +1,17 @@
-import { signInSignUpUser } from "@/actions/action"
-import bcrypt from "bcryptjs"
-import { randomUUID } from "crypto"
-import NextAuth from "next-auth"
-import { JWT } from "next-auth/jwt"
-import Credentials from "next-auth/providers/credentials"
-import Google from 'next-auth/providers/google'
-import { getAdminQuery, getUserQuery } from "@/SQLqueries/queries"
-import { QueryResult } from "pg"
+import { signUp } from "@/actions/action";
+import { getAdminQuery, getUserQuery } from "@/SQLqueries/authQueries";
+import { getUserFromDatabase } from "@/SQLqueries/userQueries";
+import { compare } from "bcryptjs";
+import NextAuth, { AuthError } from "next-auth";
+import { JWT } from "next-auth/jwt";
+import Credentials from "next-auth/providers/credentials";
+import Google from "next-auth/providers/google";
+import { z } from "zod";
 
-export const { handlers, signIn, signOut, auth } = NextAuth({
+export const { handlers, signIn, signOut, auth, unstable_update } = NextAuth({
+  debug: true,
   session: {
-    strategy: "jwt"
+    strategy: "jwt",
   },
   providers: [
     Google,
@@ -18,80 +19,95 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       credentials: {
         email: {},
         password: {},
-        role: {}
+        role: {},
       },
       async authorize(credentials) {
-        let customUser: QueryResult<RoleBasedUser>
-        if (credentials.role === "admin") {
-          customUser = await getAdminQuery(credentials.email as string)
+        const parsedCredentials = z.object({
+          email: z.string().email(),
+          password: z.string(),
+          role: z.string()
+        }).safeParse(credentials)
+        if (parsedCredentials.success) {
+          let customUser: RoleBasedUser;
+          if (parsedCredentials.data.role === "ADMIN") {
+            customUser = (await getAdminQuery(parsedCredentials.data.email))[0] as AdminRole
+          } else {
+            customUser = (await getUserQuery(parsedCredentials.data.email))[0]
+          }
+          const matchPassword = await compare(
+            parsedCredentials.data.password,
+            customUser.password,
+          );
+          if (!matchPassword) throw new Error("password match failed")
+          return customUser
         }
-        else {
-          customUser = await getUserQuery(credentials.email as string)
-        }
-        const matchPassword = await bcrypt.compare(credentials.password as string, customUser.rows[0].password)
-        if (!matchPassword) throw new Error("Failed to Login User")
-        return customUser.rows[0]
-      }
-    })
+        else throw new AuthError("Input Validation Failed")
+      },
+    }),
   ],
   pages: {
     signIn: "/login",
     signOut: "/login",
-    error: "/error"
+    error: "/error",
   },
   callbacks: {
-    async jwt({ token, user, account }) {
+    async jwt({ token, user, account, session, trigger }) {
+      if (trigger === "update" && session?.email as string) {
+        const updatedUser = (await getUserFromDatabase(session.email))[0]
+        return { ...token, ...updatedUser }
+      }
       if (user) {
-        let customUser = user as RoleBasedUser
+        let customUser = user as RoleBasedUser;
         if (account?.provider === "google") {
-          const googleUser = await getUserQuery(token.email!, 'google')
-          if (!googleUser.rowCount) throw new Error("Failed to get the google user")
-          customUser = googleUser.rows[0]
+          customUser = (await getUserQuery(user.email!, "GOOGLE"))[0]
         }
-        if (customUser.role === "admin") {
+        if (customUser.role === "ADMIN") {
           return {
             ...token,
             id: customUser.id,
             email: customUser.email,
-            username: customUser.username
-          }
+            username: customUser.username,
+            role: customUser.role,
+          };
         }
         return {
           ...token,
-          first_name: customUser.first_name,
-          last_name: customUser.last_name,
+          username: customUser.username,
           login_method: customUser.login_method,
           free_tokens: customUser.free_tokens,
           subscription_type: customUser.subscription_type,
           id: customUser.id,
-          role: customUser.role
-        } as JWT
+          role: customUser.role,
+        } as JWT;
       }
-      return token as JWT
+      return token as JWT;
     },
     async session({ session, token }) {
       return {
         ...session,
         user: {
-          ...token
-        }
-      }
+          ...token,
+        },
+      };
     },
     async signIn({ user, account }) {
-      if (account?.provider === "google") {
-        const userExists = await getUserQuery(user.email!, "google")
-        if (!userExists.rowCount) {
-
-          const userCreated = await signInSignUpUser("signup", {
-            username: user.name!,
-            email: user.email!,
-            password: user.id || randomUUID(),
-            loginMethod: 'google'
-          }, 'user')
-          if (!userCreated) return false
+      if (user && account?.provider === "google") {
+        const userExists = (await getUserQuery(user.email!, "GOOGLE"))[0]
+        // TODO: added user exists
+        if (!userExists) {
+          const userCreated = await signUp(
+            {
+              username: user.name!,
+              email: user.email!,
+              password: user.id || crypto.randomUUID(),
+              loginMethod: "GOOGLE",
+            },
+            "USER",
+          );
+          if (!userCreated) throw new Error("new google user creation failed")
         }
       }
-      return true
-    }
-  }
-})
+      return true;
+    },
+  },
+});

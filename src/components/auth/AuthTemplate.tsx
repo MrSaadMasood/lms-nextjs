@@ -1,14 +1,19 @@
-import Image from 'next/image'
-import React from 'react'
+import Image from "next/image";
+import React from "react";
 
-export default function AuthTemplate({ heading, children }: {
-  heading: string,
-  children: React.ReactNode
+export default function AuthTemplate({
+  heading,
+  children,
+}: {
+  heading: string;
+  children: React.ReactNode;
 }) {
   return (
     <section className="w-screen  h-screen pt-7  flex flex-col justify-start items-center">
-      <div className="h-[85%] w-[90%] sm:w-[45%] flex  flex-col gap-2 justify-center
-        items-center  ">
+      <div
+        className="h-[85%] w-[90%] sm:w-[45%] flex  flex-col gap-2 justify-center
+        items-center  "
+      >
         <Image alt="logo" src={"/lms-logo.png"} width={100} height={100} />
         <h2 className="text-center  text-gray-900 sm:text-2xl text-3xl font-semibold leading-normal">
           {heading}
@@ -21,5 +26,5 @@ export default function AuthTemplate({ heading, children }: {
         {children}
       </div>
     </section>
-  )
+  );
 }
