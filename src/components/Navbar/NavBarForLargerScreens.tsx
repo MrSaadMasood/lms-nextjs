@@ -2,7 +2,6 @@ import { authLinksNavBar, navbarLink } from "@/lib/variables/constants";
 import Image from "next/image";
 import NavbarLink from "./NavBarLink";
 import Link from "next/link";
-import { randomUUID } from "crypto";
 import clsx from "clsx";
 
 export async function NavBarLargerScreenUnAuth() {
@@ -12,7 +11,7 @@ export async function NavBarLargerScreenUnAuth() {
         <Image alt="logo" priority={true} src={`/lms-logo.png`} width={50} height={50} />
         <div className="justify-start items-center gap-3 flex">
           {navbarLink.map((link) => (
-            <NavbarLink key={randomUUID()} content={link.content} to={link.to} />
+            <NavbarLink key={crypto.randomUUID()} content={link.content} to={link.to} />
           ))}
           <div />
         </div>
@@ -20,7 +19,7 @@ export async function NavBarLargerScreenUnAuth() {
       <div className="justify-start items-center gap-2 flex">
         {authLinksNavBar.map((link) => (
           <Link
-            key={randomUUID()}
+            key={crypto.randomUUID()}
             href={link.to}
             className={clsx(
               `px-4 py-3 rounded-lg font-semibold flex justify-center items-center 

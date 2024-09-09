@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import useToaster from "@/hooks/useToaster";
-import { nameSchema, passwordSchema } from "@/lib/schema";
+import { nameSchema, passwordSchema } from "@/lib/zodSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";

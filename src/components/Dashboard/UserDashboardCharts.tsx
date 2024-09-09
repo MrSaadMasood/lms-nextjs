@@ -3,7 +3,6 @@ import TakeTestCall from "@/components/Dashboard/TakeTestCall";
 import { accuracyChartDataGenerator, overallStatsChartDataGenerator, perSubjectDifficultyChartDataGenerator, weeklyActivityChartDataGenerator } from "@/lib/utils/serverHelpers";
 import { userDashboardBarChartPersonalizedData } from "@/SQLqueries/userQueries";
 import { clsx } from "clsx";
-import { randomUUID } from "crypto";
 import dynamic from 'next/dynamic';
 
 const BarChart = dynamic(() => import("@/components/Dashboard/BarChart"), { ssr: false })
@@ -15,7 +14,6 @@ export default async function UserDashboardCharts({ performance, user }: {
 }) {
   const [accuracy, weeklyActivity, overallStats, perSubjectDifficultyStats] =
     await userDashboardBarChartPersonalizedData(user.id)
-  console.log("The perSubjectDifficultyStats", accuracy, weeklyActivity, perSubjectDifficultyStats, overallStats)
   const userDashboardPersonalData = [
     { heading: "Overall Stats", chartData: overallStatsChartDataGenerator(overallStats) },
     { heading: "Accuray", chartData: accuracyChartDataGenerator(accuracy.rows as AccuracyStats[]) },
@@ -35,7 +33,7 @@ export default async function UserDashboardCharts({ performance, user }: {
       <div className=" md:flex md:flex-row md:flex-wrap">
         {userDashboardPersonalData.map((userDashboardData, index) => (
           <ChartTemplate
-            key={randomUUID()}
+            key={crypto.randomUUID()}
             heading={userDashboardData.heading}
             margin={clsx("h-[28rem]", index === 3 && "mb-20 md:mb-8")}
           >

@@ -30,7 +30,7 @@ function ForgotPasswordForm({ isAdminPage }: { isAdminPage: boolean }) {
   const { errorToast, normalToast } = useToaster();
 
   async function sendEmailToUser(data: { email: string }) {
-    const { error } = await sendEmail(data.email, isAdminPage ? "admin" : "user");
+    const { error } = await sendEmail(data.email, isAdminPage ? "ADMIN" : "USER");
     if (error) return errorToast("Failed to send email");
     normalToast("Email sent successfully");
   }
