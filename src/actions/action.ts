@@ -6,7 +6,8 @@ import { signIn } from "@/lib/authJs/auth";
 import { AUTH_SECRET, EMAIL } from "@/lib/envValidator";
 import { resend } from "@/lib/resend/resend";
 import { hash } from "bcryptjs";
-import jwt from "jsonwebtoken";
+import { SignJWT, jwtVerify } from "jose"
+
 
 export async function signInToGoogle() {
   await signIn("google", { redirectTo: "/dashboard/user/main" });
@@ -43,8 +44,14 @@ export async function signUp<T extends string>(
   }
 }
 
+const authSecretForJose = new TextEncoder().encode(AUTH_SECRET)
+
 export async function sendEmail(email: string, role: Roles) {
-  const token = jwt.sign({ email }, AUTH_SECRET, { expiresIn: "1h" });
+  const token = await new SignJWT({ email })
+    .setExpirationTime("1 hour")
+    .setIssuedAt()
+    .sign(authSecretForJose)
+  console.log("The token created from the jose is", token)
   const response = await resend.emails.send({
     from: "onboarding@resend.dev",
     to: EMAIL,
@@ -62,7 +69,9 @@ export async function sendEmail(email: string, role: Roles) {
 }
 
 export async function updateUserPassword(token: string, password: string, role: Roles) {
-  const user = jwt.verify(token, AUTH_SECRET) as { email: string };
+  const { payload } = await jwtVerify(token, authSecretForJose)
+  const user = payload as { email: string }
+  console.log("THe user payload after jwt token verfication is", user)
   if (!user.email) return false;
   try {
     const hashedPassword = await hash(password, 10);
