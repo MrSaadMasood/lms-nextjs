@@ -1,10 +1,8 @@
 import ChartTemplate from "@/components/Dashboard/ChartTemplate";
-import { clsx } from 'clsx'
-import UploadCSVDialog from "@/components/Dashboard/admin/UploadCSVDialog";
-import dynamic from "next/dynamic"
-import { liveData } from "@/lib/variables/constants";
 import RealTimeDataCardDisplayer from "@/components/Dashboard/RealTimeDataCardDisplayer";
 import CSVUplaoder from "@/components/Dashboard/admin/CSVUplaoder";
+import { clsx } from 'clsx';
+import dynamic from "next/dynamic";
 
 const BarChart = dynamic(
   () =>
@@ -24,7 +22,7 @@ export default function AdminMainPage() {
       </h2>
       <CSVUplaoder />
       {/* real time data */}
-      <RealTimeDataCardDisplayer liveData={liveData} />
+      <RealTimeDataCardDisplayer liveData={{ total_users: 1, subscription_type: "PERM", free_tokens: 1, performance: 1, total_mcq_bank: 1, total_mcq_solved: 1 }} />
       {/* charts  */}
       <div className="  md:flex md:flex-row md:flex-wrap ">
         {[1, 2].map((item, index) => (
@@ -37,7 +35,7 @@ export default function AdminMainPage() {
               className="bg-white w-[95%] h-[90%] p-2 overflow-hidden rounded-3xl flex flex-col
             justify-center items-center"
             >
-              <BarChart />
+              <BarChart chartData={{ labels: ["hello"], datasets: [{ data: [1, 2, 34, 5] }] }} />
             </section>
           </ChartTemplate>
         ))}
