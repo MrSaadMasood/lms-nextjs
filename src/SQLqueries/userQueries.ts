@@ -178,7 +178,7 @@ export async function getUserFromDatabase(email: string) {
     .where(eq(LmsUsersTable.email, email))
 }
 
-export async function getTestSearchCategoryBasedInfo(category: TestSearchCategory, discover: string | null) {
+export async function getTestSearchCategoryBasedInfo(category: TestSearchCategory, discover: string) {
   switch (category) {
     case "academy":
       // SELECT id, name FROM lms_academy WHERE name ILIKE '%${discover}%';
