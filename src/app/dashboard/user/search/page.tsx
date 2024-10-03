@@ -8,7 +8,7 @@ export default async function UserSearch({ searchParams }: {
   }
 }) {
   const { category, discover } = searchParams
-  const categoryData = (await getTestSearchCategoryBasedInfo(category, discover))
+  const categoryData = (await getTestSearchCategoryBasedInfo(category, discover || ""))
   return (
     <SearchPage
       categoryData={categoryData}
