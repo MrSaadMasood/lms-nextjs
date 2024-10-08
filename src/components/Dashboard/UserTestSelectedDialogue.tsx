@@ -16,6 +16,7 @@ import { v4 as uuid } from 'uuid';
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { deductFreeTokensFromUserRequest } from "@/fetchRequests/fetch";
+import { SkeletonUI } from "./Skeleton";
 
 export default function UserTestSelectedDialogue({
   title,
@@ -38,7 +39,8 @@ export default function UserTestSelectedDialogue({
     stopUserIfIncompleteOptionsSelected,
     createParamsForTestPageNavigation,
     selectedOption,
-    changeValue
+    changeValue,
+    isFilterChanged
   } = useTestSelection({
     academyId,
     category,
@@ -100,7 +102,7 @@ export default function UserTestSelectedDialogue({
         </DialogHeader>
         {categoryCorrespondingMappedObject[category].map(
           ({ placeholder, type, showOptionsForForm, list }) => {
-            if (showOptionsForForm) return (
+            if (showOptionsForForm && list.length > 0) return (
               <SelectForm
                 key={uuid()}
                 placeholder={placeholder}
@@ -111,6 +113,9 @@ export default function UserTestSelectedDialogue({
               />
             )
           })}
+        {isFilterChanged && (
+          <SkeletonUI />
+        )}
         {!isPermanentUser && !shouldRecharge && (
           <div
             className=" text-xs text-red-700 "> * 100 tokens will be deduced from your account for each test.
