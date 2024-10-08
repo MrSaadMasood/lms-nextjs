@@ -21,6 +21,8 @@ interface AdminRole {
 type Roles = "ADMIN" | "USER";
 type Subscription = "NONE" | "PERM" | "TEMP"
 type LoginMethod = "NORMAL" | "GOOGLE"
+type TestDifficulty = "EASY" | "MEDIUM" | "HARD"
+type CorrectOption = "A" | "B" | "C" | "D"
 
 type OverStats = {
   total_solved: number;
@@ -91,7 +93,7 @@ type SelectedOptionsMap<T> = {
 type DataForTestFiltering = {
   examList: { paper_category: string, paper_year: number }[],
   subjectList: { subject: string, paper_year: number }[],
-  academyList: { academy_name: string, paper_year: number }[]
+  academyList: { academy_name: string, paper_year: number, academy_id: string }[]
   yearList: { paper_year: number }[]
 }
 
@@ -105,4 +107,52 @@ type BooleanOptionsForYearList = {
   isExamFilterSelected: boolean,
   isAcademyFilterSelected: boolean,
   isYearFilterSelected: boolean,
+}
+
+type GetTestFilters<T> = {
+  academy: T,
+  category: TestSearchCategory,
+  year: T,
+  exam: T,
+  subject: T
+  filter: TestFilterByOptions,
+  academy_id: T
+}
+
+type MCQ = {
+  id: number;
+  subject: string,
+  statement: string;
+  option_a: string;
+  option_b: string;
+  option_c: string;
+  option_d: string;
+  explanation: string;
+  difficulty: TestDifficulty;
+  correct_option: CorrectOption
+  current_selected_option?: string
+}
+
+type Option = {
+  value: string, correct: CorrectOption
+}
+
+
+type OptionSelector = {
+  mcq: MCQ,
+  valueSelected: string
+}
+
+type MCQExtendedForUserSelection = MCQ & {
+  current_selected_option: string
+}
+
+
+type MarketDataOfSpecificCoin = {
+  current_price: number;
+  market_cap: number;
+  fully_diluted_valuation: number;
+  total_supply: number;
+  max_supply: number;
+  circulating_supply: number;
 }
