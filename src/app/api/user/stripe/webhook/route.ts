@@ -1,5 +1,4 @@
 import { updateUserSubscriptionAndToken } from "@/SQLqueries/userQueries";
-import { auth } from "@/lib/authJs/auth";
 import { STRIPE_WEBHOOK_SECRET } from "@/lib/envValidator";
 import { stripe } from "@/lib/stripe/stripe";
 import { NextRequest, NextResponse } from "next/server";
