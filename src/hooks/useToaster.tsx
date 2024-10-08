@@ -18,6 +18,7 @@ function useToaster() {
     (message: string) => {
       toast({
         description: message,
+        className: " bg-black text-white rounded-lg font-bold",
       });
     },
     [],

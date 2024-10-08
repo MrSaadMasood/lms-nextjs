@@ -1,45 +1,65 @@
+import clsx from "clsx";
 import { RadioGroupForMCQ } from "./RadioGroupForMCQ";
+import { v4 as uuid } from "uuid";
+import { isCorrectOptionSelectedForMCQ } from "@/lib/utils/clientHelpers";
 
-function MCQ({ result }: { result: string | null }) {
+function MCQ({ result, mcq, questionNumber, mcqOptionSelected, optionSelector }: {
+  result: boolean,
+  mcq: MCQ,
+  questionNumber: number,
+  mcqOptionSelected: string,
+  optionSelector: (options: OptionSelector) => void
+}) {
+
+  const options: Option[] = [
+    { value: mcq.option_a, correct: "A" },
+    { value: mcq.option_b, correct: "B" },
+    { value: mcq.option_c, correct: "C" },
+    { value: mcq.option_d, correct: "D" }
+  ]
+
   return (
     <div
-      className="  text-black w-full h-auto rounded-2xl p-2 
+      className="  text-black w-full h-full rounded-2xl p-2 
           flex flex-col justify-start items-start bg-white border border-black
-          space-y-2"
+          space-y-4 "
     >
-      <div className=" font-bold text-base  ">Question 1</div>
-      <div className="  text-base h-auto ">
-        What is the value of x in hello hslfjlsjflsajl determine the right anser
+      <div className=" 
+        font-bold w-full h-auto flex justify-center items-center text-2xl md:text-4xl ">
+        Question {questionNumber}</div>
+      <div className=" w-full flex justify-center items-center text-lg md:text-xl h-auto break-all ">
+        {mcq.statement}
       </div>
-      {!result && <RadioGroupForMCQ />}
-      {result && (
-        <ul className=" w-[80%] h-auto  p-2 ">
-          {[
-            "defaulths asdfjlk asjdfl javc., lj lkajsdflkj lkjas laklsdjflksjdfklajsdfljklasjdflkajlkjsdlk jflasfj ljdsalfa dljflj ldj nlcl kjdlskfj laj lksjd la",
-            "confortable",
-            "hello",
-            "another",
-          ].map((statement, index) => (
-            <li
-              className={` ${index === 1 && "bg-yellow-500 border-2 border-black "}  rounded-xl p-2`}
-              key={index}
-            >
-              <span className=" font-bold ">a: </span>
-              {statement}
-            </li>
-          ))}
-        </ul>
-      )}
-      {result && (
+      <div><span className=" font-bold ">Difficulty:</span> {mcq.difficulty}</div>
+
+      {!result && <RadioGroupForMCQ
+        mcqOptionSelected={mcqOptionSelected}
+        optionSelector={optionSelector}
+        options={options}
+        mcq={mcq}
+      />}
+      {result && options.map((option, index) => {
+        const isCorrectOptionSelected = isCorrectOptionSelectedForMCQ(mcq, option.value)
+        return (
+          <div key={index}
+            className={clsx(`flex  flex-row justify-start  
+              items-center h-auto w-full  space-x-2 break-all
+              p-2 rounded-xl`, isCorrectOptionSelected && " bg-black text-white border-2 border-black "
+              , !isCorrectOptionSelected && option.value === mcq.current_selected_option && "bg-red-600 text-white ")}>
+            {option.value}
+          </div>
+        )
+      })}
+      {result && mcq.explanation !== "NONE" && (
         <>
-          <div className=" font-bold ">Explanation:</div>
-          <div className=" w-full h-full flex flex-col justify-center items-center ">
-            <div className=" w-[90%] h-auto p-2  rounded-xl ">
-              jsldfj l jasdfj lasj jasdlf j alsjdf lja jlasjd sjfljow oj ljl jc alksdjf s
-              sdflsdfjsljf lsj asj fljs ljsl jj lkjdfasdfjsdlfj aslj fl
+          <div className="font-bold text-xl">Explanation:</div>
+          <div className="w-full h-full flex justify-center items-center">
+            <div className="w-[90%] h-auto rounded-xl break-all">
+              {mcq.explanation}
             </div>
           </div>
         </>
+
       )}
     </div>
   );

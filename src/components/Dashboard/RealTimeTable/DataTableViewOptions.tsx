@@ -15,15 +15,17 @@ import { FaChevronDown } from "react-icons/fa";
 
 interface DataTableViewOptionsProps<TData> {
   table: Table<TData>;
+  columnRecord: Record<string, string>
 }
 
-export function DataTableViewOptions<TData>({ table }: DataTableViewOptionsProps<TData>) {
+export function DataTableViewOptions<TData>({ table, columnRecord }: DataTableViewOptionsProps<TData>) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button
           variant="outline"
-          className="ml-auto bg-black text-white lg:flex lg:justify-center lg:items-center space-x-2 "
+          className="ml-auto bg-black hover:bg-black hover:text-white
+          text-white lg:flex lg:justify-center lg:items-center space-x-2 "
         >
           <div>View</div>
           <FaChevronDown />
@@ -43,7 +45,7 @@ export function DataTableViewOptions<TData>({ table }: DataTableViewOptionsProps
                 checked={column.getIsVisible()}
                 onCheckedChange={(value) => column.toggleVisibility(!!value)}
               >
-                {column.id}
+                {columnRecord[column.id]}
               </DropdownMenuCheckboxItem>
             );
           })}
