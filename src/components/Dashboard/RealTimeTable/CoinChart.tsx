@@ -21,8 +21,11 @@ function CoinChart({
     chartTypeOptions,
     barChartRef,
     lineChartDataForCoin,
-    barChartDataForCoin
+    barChartDataForCoin,
+    coinData,
+    coinDataToAccess
   } = useCoinChart({ coinId })
+
 
   return (
     <div
@@ -43,14 +46,14 @@ function CoinChart({
           <Line
             ref={chartRef}
             id="lineChart"
-            options={lineChartOptions}
+            options={lineChartOptions(coinData, coinDataToAccess)}
             data={lineChartDataForCoin}
           />
         ) : (
           <Bar
             id="barChart"
             ref={barChartRef}
-            options={lineChartOptions as GeneralChartOptions<"bar">}
+            options={lineChartOptions(coinData, coinDataToAccess) as GeneralChartOptions<"bar">}
             data={barChartDataForCoin}
           />
         )}

@@ -50,7 +50,7 @@ export default function RealTimeRouteTable<T>({
   columnRecord: Record<keyof T, string>
 }) {
 
-  const columns = useMemo(() => columnsDef, [showDeleteButton])
+  const columns = useMemo(() => columnsDef, [columnsDef])
   // const columns = useMemo(() => [
   //   columnHelper.display({
   //     id: "select",
