@@ -1,4 +1,3 @@
-import COIN_DATA from "@/../COIN_DATA.json";
 import {
   ArcElement,
   BarElement,
@@ -17,6 +16,7 @@ import {
   TooltipItem,
 } from "chart.js";
 import zoomPlugin from "chartjs-plugin-zoom";
+import { CoinHistoricalData } from "@/lib/types/exported-types";
 
 export const doughnutChartplugins: Plugin<"doughnut">[] = [
   {
@@ -92,63 +92,65 @@ export const doughnutChartOptions: ChartOptions<"doughnut"> = {
 }
 
 
-export const lineChartOptions: ChartOptions<"line"> = {
-  interaction: { intersect: false, mode: "index" as "index" },
-  scales: {
-    x: {
-      grid: {
-        drawOnChartArea: false,
-        drawTicks: false,
+export function lineChartOptions(coinData: CoinHistoricalData, coinDataToAccess: CoinDataToAccess): ChartOptions<"line"> {
+  return {
+    interaction: { intersect: false, mode: "index" as "index" },
+    scales: {
+      x: {
+        grid: {
+          drawOnChartArea: false,
+          drawTicks: false,
+        },
+        border: {
+          display: false,
+        },
       },
-      border: {
-        display: false,
+      y: {
+        grid: {
+          drawTicks: false,
+          color: "rgba(194, 194, 194, .4)",
+        },
+        border: {
+          display: false,
+          dashOffset: 40,
+        },
       },
     },
-    y: {
-      grid: {
-        drawTicks: false,
-        color: "rgba(194, 194, 194, .4)",
-      },
-      border: {
-        display: false,
-        dashOffset: 40,
-      },
-    },
-  },
-  maintainAspectRatio: false,
-  devicePixelRatio: 4,
-  plugins: {
-    zoom: {
-      pan: {
-        enabled: true,
-        mode: "xy" as "xy",
-      },
+    maintainAspectRatio: false,
+    devicePixelRatio: 4,
+    plugins: {
       zoom: {
-        wheel: {
+        pan: {
           enabled: true,
+          mode: "xy" as "xy",
         },
-        pinch: {
-          enabled: true,
+        zoom: {
+          wheel: {
+            enabled: true,
+          },
+          pinch: {
+            enabled: true,
+          },
         },
       },
-    },
-    legend: {
-      display: false,
-    },
-    verticalHoverLine: true,
-    tooltip: {
-      callbacks: {
-        title(tooltipItems: TooltipItem<"line">[]) {
-          const dataIndex = tooltipItems[0].dataIndex as number;
-          return new Date(COIN_DATA.prices[dataIndex][0]).toUTCString();
-        },
-        label(tooltipItem: TooltipItem<"line">) {
-          const dataIndex = tooltipItem.dataIndex as number;
-          return "Price: $" + COIN_DATA.prices[dataIndex][1].toFixed(4);
+      legend: {
+        display: false,
+      },
+      verticalHoverLine: true,
+      tooltip: {
+        callbacks: {
+          title(tooltipItems: TooltipItem<"line">[]) {
+            const dataIndex = tooltipItems[0].dataIndex as number;
+            return new Date(coinData[coinDataToAccess][dataIndex][0]).toUTCString();
+          },
+          label(tooltipItem: TooltipItem<"line">) {
+            const dataIndex = tooltipItem.dataIndex as number;
+            return "Price: $" + coinData[coinDataToAccess][dataIndex][1].toFixed(4);
+          },
         },
       },
-    },
-  },
+    }
+  }
 };
 
 export const barChartOptions: ChartOptions<"bar"> = {
