@@ -57,16 +57,24 @@ function useTestSelection(
         prev = resetSelectedFiltersOptions(prev)
         setIsFilterChanged(true)
       }
-      return {
+      const changedSelectedOption = {
         ...prev,
-        [type]: value,
+        [type]: value
       }
+      if (category === "subject" && type === "academy") {
+        changedSelectedOption.academyId = (memoFetcheDataForTestFiltering
+          .academyList.find(academy =>
+            academy.academy_name === value))?.academy_id || ""
+      }
+      return changedSelectedOption
     });
-  }, [])
+  }, [memoFetcheDataForTestFiltering, category])
 
   const stopCategroySpecificDataFetcherFromRunning = useCallback(() => {
     if ((isAcademyCategorySelected || isSubjectCategorySelected) && !isFilterChanged) return true
-    if (isExamCategorySelected && memoFetcheDataForTestFiltering.subjectList.length > 1) return true
+    if (isExamCategorySelected &&
+      (!examChoosenAfterFilterExist || memoFetcheDataForTestFiltering.subjectList.length > 1)
+    ) return true
     return false
 
   }, [
@@ -75,6 +83,7 @@ function useTestSelection(
     isAcademyCategorySelected,
     isSubjectCategorySelected,
     isExamCategorySelected,
+    examChoosenAfterFilterExist
   ])
 
   const getCategorySpecificDataForFurtherFiltering = useCallback(
@@ -118,12 +127,13 @@ function useTestSelection(
 
   function createParamsForTestPageNavigation() {
     const params = new URLSearchParams(searchParams)
-    const { filter, academy, exam, subject, year } = selectedOption
+    const { filter, academy, exam, subject, year, academyId } = selectedOption
     params.set("filter", filter);
     params.set("academy", academy);
     params.set("subject", subject);
     params.set("exam", exam);
     params.set("year", year);
+    params.set("academy_id", academyId)
     return params
   }
 
@@ -155,7 +165,8 @@ function useTestSelection(
     createParamsForTestPageNavigation,
     stopUserIfIncompleteOptionsSelected,
     changeValue,
-    selectedOption
+    selectedOption,
+    isFilterChanged
   }
 }
 

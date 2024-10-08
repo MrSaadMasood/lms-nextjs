@@ -1,5 +1,6 @@
 import "client-only"
 import { AcademyCategory, ExamCategory, SubjectCategory } from "@/Classes/client/TestSearchCategory"
+import { testResultSchema } from "../types/exported-types"
 
 export const categoryMappedClasses = {
   exam: ExamCategory,
@@ -207,4 +208,97 @@ export function testSearchRelatedBooleanValuesGenerator(selectedOption: Selected
     yearChoosenAfterFilterExist
   }
 }
+
+
+export function isCorrectOptionSelectedForMCQ(mcq: MCQ, valueSelected: string) {
+  let correctOption: string;
+  switch (mcq.correct_option) {
+    case "A":
+      correctOption = mcq.option_a
+      break;
+    case "B":
+      correctOption = mcq.option_b
+      break;
+    case "C":
+      correctOption = mcq.option_c
+      break;
+    case "D":
+      correctOption = mcq.option_d
+      break;
+  }
+  return correctOption === valueSelected
+}
+
+export function initialTestDifficultySetter(userPerformanceAverage: number) {
+  if (userPerformanceAverage >= 70) return 2
+  else if (userPerformanceAverage >= 50) return 1
+  else return 0
+}
+
+export function adjustDifficulty(solvedWithinTime: boolean, wasPrevAnsCorrect: boolean, currentDifficulty: number) {
+  if (solvedWithinTime && wasPrevAnsCorrect && currentDifficulty < 2) {
+    return currentDifficulty + 1
+  }
+  else if (!solvedWithinTime || !wasPrevAnsCorrect) {
+    return currentDifficulty === 0 ? 0 : currentDifficulty - 1
+  }
+  return currentDifficulty
+}
+
+
+export function isAtEndOfArray<T>(array: T[], currLength: number) {
+  return array.length === currLength
+}
+
+export function selectMCQBasedOnAdjustedDifficulty(difficultyToUse: TestDifficulty, mcqToUseRecord: Record<TestDifficulty, MCQ[]>, lookupNumber: number) {
+  return mcqToUseRecord[difficultyToUse][lookupNumber]
+}
+
+
+export function handleMCQArrayExhaustion(
+  mcqToUseRecord: Record<TestDifficulty, MCQ[]>,
+  lookUpNumberPerDifficulty: Record<TestDifficulty, number>,
+  difficulty: number
+) {
+
+  const availableDifficulty: TestDifficulty[] = ["EASY", "MEDIUM", "HARD"]
+  while (difficulty >= 0) {
+    if (difficulty === 0) {
+      const currentDifficulty = availableDifficulty[difficulty]
+      while (isAtEndOfArray(mcqToUseRecord[currentDifficulty], lookUpNumberPerDifficulty[currentDifficulty] + 1)) difficulty++
+      return difficulty
+    }
+    const currentDifficulty = availableDifficulty[difficulty]
+    if (!isAtEndOfArray(mcqToUseRecord[currentDifficulty], lookUpNumberPerDifficulty[currentDifficulty] + 1)) {
+      return difficulty
+    }
+    difficulty--
+  }
+  return 0
+}
+
+export function seggregateResultsBasedOnSubjects(allSovledMCQs: MCQExtendedForUserSelection[]) {
+  const seggregationMap: testResultSchema = {}
+  for (const solvedMCQ of allSovledMCQs) {
+    const ifSeggregatedBySubject = seggregationMap[solvedMCQ.subject]
+    const isCorrectOptionSelected = isCorrectOptionSelectedForMCQ(solvedMCQ, solvedMCQ.current_selected_option)
+    const correct = isCorrectOptionSelected ? 1 : 0
+    const wrong = !isCorrectOptionSelected ? 1 : 0
+    const isEasy = solvedMCQ.difficulty === "EASY" ? 1 : 0
+    const isMedium = solvedMCQ.difficulty === "MEDIUM" ? 1 : 0
+    const isHard = solvedMCQ.difficulty === "HARD" ? 1 : 0
+
+    seggregationMap[solvedMCQ.subject] = {
+      subject: solvedMCQ.subject,
+      total_solved: (ifSeggregatedBySubject?.total_solved || 0) + 1,
+      total_incorrect: (ifSeggregatedBySubject?.total_incorrect || 0) + wrong,
+      total_hard: (ifSeggregatedBySubject?.total_hard || 0) + isHard,
+      total_medium: (ifSeggregatedBySubject?.total_medium || 0) + isMedium,
+      total_easy: (ifSeggregatedBySubject?.total_easy || 0) + isEasy,
+      total_correct: (ifSeggregatedBySubject?.total_correct || 0) + correct
+    }
+  }
+  return seggregationMap
+}
+
 

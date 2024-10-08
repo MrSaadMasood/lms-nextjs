@@ -10,7 +10,7 @@ const envSchema = z.object({
   AUTH_TRUST_HOST: z.coerce.boolean(),
   STRIPE_SECRET_KEY: z.string().min(1),
   STRIPE_WEBHOOK_SECRET: z.string().min(1),
-  BASE_URL: z.string().url()
+  BASE_URL: z.string().url(),
 });
 
 const env = envSchema.parse(process.env);
@@ -24,7 +24,7 @@ const {
   AUTH_TRUST_HOST,
   STRIPE_SECRET_KEY,
   STRIPE_WEBHOOK_SECRET,
-  BASE_URL
+  BASE_URL,
 } = env;
 
 export {
@@ -37,5 +37,5 @@ export {
   AUTH_TRUST_HOST,
   STRIPE_SECRET_KEY,
   STRIPE_WEBHOOK_SECRET,
-  BASE_URL
+  BASE_URL,
 };

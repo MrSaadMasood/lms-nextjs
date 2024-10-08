@@ -1,53 +1,62 @@
-import MCQ from "@/components/Dashboard/MCQ";
-import TestCompletionDialog from "@/components/Dashboard/TestCompletionDialog";
-import TestTimer from "@/components/Dashboard/TestTimer";
-import Link from "next/link";
+import TestController from "@/components/Dashboard/test/TestController";
+import { auth } from "@/lib/authJs/auth";
+import { userExtractor } from "@/lib/utils/serverHelpers";
+import { averageUserPerformanceQuery, testBasedOnFilters } from "@/SQLqueries/userQueries";
+import { headers } from "next/headers";
 
-export default function UserTest({
+export default async function UserTest({
   searchParams,
 }: {
   searchParams: {
     [key: string]: string | null;
+    category: TestSearchCategory;
+    filter: TestFilterByOptions
   };
 }) {
-  const { academy, subject, exam, year, result } = searchParams;
+
+  const referer = headers().get("referer")
+  const { academy, subject, exam, year, category, filter, academy_id } = searchParams;
+  const session = await auth()
+  const user = userExtractor(session)
+  let testBasedOnFiltersArray = (await testBasedOnFilters({
+    academy, subject, exam, year, category, filter, academy_id
+  })).rows as MCQ[];
+  let userPerformanceAverage = 0
+  try {
+    userPerformanceAverage = (await averageUserPerformanceQuery(user.id)).rows[0].performance
+  } catch (error) {
+    console.log("The user Performance averge failed")
+  }
+
+  const isTestFound = testBasedOnFiltersArray.length > 0
+
+  if (!referer || !referer.includes("/user/search")) {
+    return (
+      <section
+        className=" bg-violet-700 w-screen md:w-full md:h-full md:max-h-auto h-screen max-h-auto text-white
+    overflow-hidden overflow-y-scroll noScroll flex flex-col justify-center items-center "
+      >
+        <h2
+          className="text-xl sm:text-xl md:text-2xl lg:text-4xl  text-white  font-bold  h-full w-full 
+    flex justify-center items-center mt-2 break-all  "
+        >
+          Your Are Accessing Through Incorrect Path
+        </h2>
+      </section>
+    )
+  }
   return (
     <section
-      className=" bg-violet-700 w-screen md:w-full md:h-full h-screen text-white
+      className=" bg-violet-700 w-screen md:w-full md:h-full md:max-h-auto h-screen max-h-auto text-white
       overflow-hidden overflow-y-scroll noScroll  "
     >
-      <h2
-        className="text-4xl md:text-6xl text-white  font-bold  h-20 w-full 
-      
-      flex justify-center items-center mt-2  "
-      >
-        {result ? "Result" : "Quiz"}
-      </h2>
       {/* timer */}
+      <TestController
+        mcqData={testBasedOnFiltersArray}
+        isTestFound={isTestFound}
+        userPerformanceAverage={userPerformanceAverage}
+      />
 
-      {!result && <TestTimer />}
-      {/* quiz */}
-
-      <div
-        className=" w-full h-auto bg-white rounded-2xl mb-[4.5rem] md:mb-[1rem]
-        flex flex-col justify-start items-center space-y-2 p-2 "
-      >
-        {Array(10)
-          .fill(0)
-          .map((item, index) => (
-            <MCQ key={index} result={result} />
-          ))}
-        {!result && <TestCompletionDialog />}
-        {result && (
-          <Link
-            href={"/dashboard/user/main"}
-            replace={true}
-            className=" bg-black text-white text-sm p-2 rounded-md"
-          >
-            Go Home
-          </Link>
-        )}
-      </div>
     </section>
   );
 }

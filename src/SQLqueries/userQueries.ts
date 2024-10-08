@@ -1,10 +1,13 @@
 import "server-only"
 import { db } from "@/lib/drizzle";
-import { LmsAcademyTable, LmsAdminsTable, LmsTestDataTable, LmsUsersTable, LmsUserStatsTable } from "@/lib/drizzle/schema";
-import { PerformanceFilter, RealTimeCardInitialData } from "@/lib/types/exported-types";
+import { correctOptionEnum, LmsAcademyTable, LmsAdminsTable, LmsTestDataTable, LmsUsersTable, LmsUserStatsTable } from "@/lib/drizzle/schema";
+import { ExtendedTestResultSchemaWithUserId, PerformanceFilter, RealTimeCardInitialData } from "@/lib/types/exported-types";
 import { getPreviousDate } from "@/lib/utils/serverHelpers";
 import { asc, desc, eq, ilike, or, SQL, sql, sum } from "drizzle-orm";
 import { LucideMessageCircleDashed } from "lucide-react";
+import { MAX_MCQ_LIMIT, MCQ_LIMIT_FOR_PERSOLIZED_ALGO_ACTIVATION } from "@/lib/variables/constants";
+import { z } from "zod";
+import { testResultSchema } from "@/lib/zodSchema";
 
 export async function realTimeCardInitialDataQuery(id: string, performance: PerformanceFilter) {
   const date = new Date()
@@ -277,7 +280,8 @@ export async function subjectListPresentInExam(examName: string) {
 export async function academiesThatOfferSubject(subject: string) {
   // SELECT 
   //     lms_test_data.paper_year, 
-  //     lms_academy.name 
+  //     lms_academy.name,
+  //     lms_academy.id
   // FROM 
   //     lms_academy 
   // INNER JOIN 
@@ -288,17 +292,19 @@ export async function academiesThatOfferSubject(subject: string) {
   //     subject = ${subject} 
   // GROUP BY 
   //     lms_test_data.paper_year, 
-  //     lms_academy.name 
+  //     lms_academy.name,
+  //     lms_academy.id
   // ORDER BY 
   //     lms_test_data.name ASC, 
   //     lms_academy.name DESC;
   return db.select({
     academy_name: LmsAcademyTable.name,
-    paper_year: LmsTestDataTable.paper_year
+    paper_year: LmsTestDataTable.paper_year,
+    academy_id: LmsAcademyTable.id
   }).from(LmsAcademyTable)
     .innerJoin(LmsTestDataTable, eq(LmsAcademyTable.id, LmsTestDataTable.academy_id))
     .where(eq(LmsTestDataTable.subject, subject))
-    .groupBy(LmsAcademyTable.name, LmsTestDataTable.paper_year)
+    .groupBy(LmsAcademyTable.name, LmsTestDataTable.paper_year, LmsAcademyTable.id)
     .orderBy(asc(LmsAcademyTable.name), desc(LmsTestDataTable.paper_year))
 }
 
@@ -336,4 +342,66 @@ export async function deductTokensFromUserForTest(id: string) {
       tx.rollback()
     }
   })
+}
+
+export async function testBasedOnFilters({
+  academy, year, exam, category, filter, subject, academy_id }: GetTestFilters<string | null>) {
+  const MAX_VALUE = MAX_MCQ_LIMIT;
+  const MIN_VALUE = MCQ_LIMIT_FOR_PERSOLIZED_ALGO_ACTIVATION
+  const initialStatement = sql<MCQ[]>`SELECT
+    id,
+    statement,
+    subject,
+    option_a,
+    option_b,
+    option_c,
+    option_d,
+    explanation,
+    difficulty,
+    correct_option
+  FROM lms_test_data WHERE `
+  switch (category) {
+    case "exam":
+      initialStatement.append(sql` subject = ${subject}`)
+      break;
+    case "academy":
+      initialStatement.append(sql` academy_id = ${academy_id} `)
+      if (filter === "Exam") {
+        initialStatement.append(sql` AND paper_category = ${exam}`)
+      }
+      else {
+        initialStatement.append(sql` AND subject = ${subject}`)
+      }
+      break;
+    case "subject":
+      initialStatement.append(sql` subject = ${subject}`)
+      if (filter === "Academy") {
+        initialStatement.append(sql` AND academy_id = ${academy_id}`)
+      }
+      break
+  }
+  if (year) initialStatement.append(sql` AND paper_year = ${year}`)
+  initialStatement.append(sql` ORDER BY RANDOM() 
+    LIMIT ${Math.floor(Math.random() * (MAX_VALUE - MIN_VALUE) + MIN_VALUE)};`)
+  return db.execute(initialStatement)
+}
+
+export async function averageUserPerformanceQuery(id: string) {
+  return db.execute<Record<string, number>>(sql<{ performance: number }>`
+    SELECT SUM(total_correct) * 100 / SUM(total_solved) AS performance FROM ${LmsUserStatsTable}
+    WHERE user_id = ${id};
+`)
+}
+
+export async function refundTokensIfTestNotFound(email: string) {
+  return db.update(LmsUsersTable).set({
+    free_tokens: sql`${LmsUsersTable.free_tokens} + 100`
+  }).where(eq(LmsUsersTable.email, email))
+}
+
+export async function addUserTestRecordToDatabase(id: string,
+  testResults: ExtendedTestResultSchemaWithUserId[]) {
+  return db.insert(LmsUserStatsTable)
+    .values(testResults)
+
 }

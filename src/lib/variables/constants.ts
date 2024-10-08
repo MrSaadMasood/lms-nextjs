@@ -1,3 +1,5 @@
+import { CryptoTableData } from "../types/exported-types";
+
 export const liveData = [
   { heading: "Total Users", stats: 300000 },
   { heading: "MCQ Bank", stats: 5000000 },
@@ -83,3 +85,8 @@ export const dateAmPmFormater = new Intl.DateTimeFormat("en-Us", {
   minute: "2-digit",
   hour12: true
 })
+
+export const MCQ_LIMIT_FOR_PERSOLIZED_ALGO_ACTIVATION = 60
+export const MAX_MCQ_LIMIT = 150
+export const COUNT_DOWN_INTIAL_VALUE = 60
+

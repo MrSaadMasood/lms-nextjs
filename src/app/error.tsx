@@ -1,5 +1,7 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
+
 export default function Error({ error, reset }: { error: Error; reset: () => void }) {
   console.log("the error page is now being rendered");
   return (
@@ -12,7 +14,7 @@ export default function Error({ error, reset }: { error: Error; reset: () => voi
           >
             {error.message}
           </div>
-          <button onClick={() => reset()}>Try Again!</button>
+          <Button onClick={() => reset()}>Try Again!</Button>
         </section>
       </body>
     </html>

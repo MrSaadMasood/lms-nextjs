@@ -7,7 +7,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-export default function TestResultTable() {
+export default function TestResultTable({ totalMCQS, totalWrong, totalSolved, totalCorrect }: {
+  totalMCQS: number,
+  totalCorrect: number,
+  totalSolved: number,
+  totalWrong: number
+}) {
+
   return (
     <Table>
       <TableHeader>
@@ -20,10 +26,10 @@ export default function TestResultTable() {
       </TableHeader>
       <TableBody>
         <TableRow key={"random"}>
-          <TableCell className="font-medium">100</TableCell>
-          <TableCell>70</TableCell>
-          <TableCell>50</TableCell>
-          <TableCell>20</TableCell>
+          <TableCell className="font-medium">{totalMCQS}</TableCell>
+          <TableCell>{totalSolved}</TableCell>
+          <TableCell>{totalCorrect}</TableCell>
+          <TableCell>{totalWrong}</TableCell>
         </TableRow>
       </TableBody>
     </Table>

@@ -1,7 +1,8 @@
 "use client";
 import RealTimeRouteTable from "@/components/Dashboard/RealTimeTable/RealTimeRouteTable";
 import dynamic from "next/dynamic";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { cryptoColumns } from "@/hooks/cryptoColumns";
+import useRealTimeChartVisuals from "@/hooks/useRealTimeChartVisuals";
 
 const CoinChart = dynamic(() => import("@/components/Dashboard/RealTimeTable/CoinChart"), {
   loading: () => <p>loading</p>,
@@ -9,16 +10,13 @@ const CoinChart = dynamic(() => import("@/components/Dashboard/RealTimeTable/Coi
 });
 
 export default function RealTimeVisualization() {
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
-  const router = useRouter();
 
-  function showCoinChart(id: string, value: string) {
-    if (!id.includes("first_name")) return;
-    params.set("coin", value);
-    router.push(`${pathname}?${params}`);
-  }
+  const {
+    cryptoTableData,
+    showCoinChart,
+    columnRecord,
+    coinId
+  } = useRealTimeChartVisuals()
 
   return (
     <section
@@ -32,12 +30,15 @@ export default function RealTimeVisualization() {
         Crypto Data Visualization
       </h2>
       <div className=" w-full p-3 h-auto flex flex-col justify-center items-center overflow-hidden">
-        {!params.has("coin") ?
+        {!coinId ?
           <RealTimeRouteTable
+            columnRecord={columnRecord}
+            tableData={cryptoTableData}
             showCoinChart={showCoinChart}
             showDeleteButton={false}
+            columnsDef={cryptoColumns}
           /> :
-          <CoinChart />
+          <CoinChart coinId={coinId} />
         }
       </div>
     </section>

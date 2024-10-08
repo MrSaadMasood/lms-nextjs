@@ -1,4 +1,5 @@
 import { Session } from "next-auth";
+import { coinHistoricalDataSchema, cryptoSchema } from "../zodSchema";
 
 type SessionProp = {
   session: Session;
@@ -24,3 +25,11 @@ type RealTimeCardInitialData<T> = {
 type CardInitialData<T> = Omit<RealTimeCardInitialData<T>, "free_tokens" | "subscription_type"> & { activeUsers: T }
 
 type PerformanceFilter = "weekly" | "monthly" | "yearly"
+type ExtendedTestResultSchemaWithUserId = z.infer<typeof testResultSchema> & { user_id: string }
+type testResultSchema = Record<string, z.infer<typeof testResultSchema>>
+
+type CryptoTableData = z.infer<typeof cryptoSchema>
+type CoinHistoricalData = z.infer<typeof coinHistoricalDataSchema>
+type SpecificCoinData = z.infer<typeof specifCoinSchema>
+
+type MarketDataKey = keyof MarketDataOfSpecificCoin

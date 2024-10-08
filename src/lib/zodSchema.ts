@@ -55,6 +55,46 @@ const paperYearSchema = z.object({
 export const dataForTestFilteringSchema = z.object({
   examList: z.array(z.object({ paper_category: zodString }).merge(paperYearSchema)),
   subjectList: z.array(z.object({ subject: zodString }).merge(paperYearSchema)),
-  academyList: z.array(z.object({ academy_name: zodString }).merge(paperYearSchema)),
+  academyList: z.array(z.object({ academy_name: zodString, academy_id: zodString }).merge(paperYearSchema)),
   yearList: z.array(paperYearSchema),
-}) 
+})
+
+export const testResultSchema = z.object({
+  total_incorrect: z.number(),
+  total_correct: z.number(),
+  total_solved: z.number(),
+  subject: zodString,
+  total_hard: z.number(),
+  total_medium: z.number(),
+  total_easy: z.number(),
+  user_id: z.string().optional()
+})
+
+export const cryptoSchema = z.object({
+  id: z.string(),
+  symbol: z.string(),
+  name: z.string(),
+  image: z.string().url(),
+  current_price: z.number(),
+  market_cap: z.number(),
+  price_change_24h: z.number(),
+  price_change_percentage_24h: z.number(),
+  price_change_percentage_1h_in_currency: z.number(),
+  price_change_percentage_7d_in_currency: z.number()
+});
+
+export const coinHistoricalDataSchema = z.object({
+  prices: z.array(z.array(z.number(), z.number())),
+  market_caps: z.array(z.array(z.number(), z.number())),
+})
+
+export const specifCoinSchema = z.object({
+  market_data: z.object({
+    current_price: z.record(z.string(), z.number()),
+    market_cap: z.record(z.string(), z.number()),
+    fully_diluted_valuation: z.record(z.string(), z.number()),
+    total_supply: z.number(),
+    max_supply: z.number(),
+    circulating_supply: z.number()
+  }),
+})
