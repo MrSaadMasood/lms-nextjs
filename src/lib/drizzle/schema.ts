@@ -42,7 +42,7 @@ export const LmsTestDataTable = pgTable("lms_test_data", {
   option_b: text("option_b").notNull(),
   option_c: text("option_c").notNull(),
   option_d: text("option_d").notNull(),
-  correct: correctOptionEnum("correct_option").notNull(),
+  correct_option: correctOptionEnum("correct_option").notNull(),
   explanation: varchar("explanation").notNull(),
   paper_year: integer("paper_year").notNull(),
   difficulty: difficultyEnum("difficulty").notNull()
