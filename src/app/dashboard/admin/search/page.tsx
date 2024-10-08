@@ -56,25 +56,13 @@ export default function AdminSearch() {
       </section>
       {/* table */}
       <div className=" w-full h-auto flex justify-center items-center ">
-        {/* no serach result  */}
-        {/* <div className=" w-[95%] h-[10rem] bg-white p-2 flex justify-center items-center */}
-        {/*   rounded-2xl space-x-2 "> */}
-        {/*   <div> */}
-        {/**/}
-        {/*     <FaSearch size={25} /> */}
-        {/*   </div> */}
-        {/*   <div> */}
-        {/**/}
-        {/*     No Search Results */}
-        {/*   </div> */}
-        {/* </div> */}
-
-        {/* table  */}
-
         <div className=" w-[95%] h-auto bg-white p-2 flex justify-center items-center
           rounded-2xl space-x-2 mb-20 md:mb-2">
           <RealTimeRouteTable
             showCoinChart={(id, value) => console.log(id, value)}
+            columnsDef={[]}
+            columnRecord={{}}
+            tableData={[]}
             showDeleteButton={true}
           />
         </div>
