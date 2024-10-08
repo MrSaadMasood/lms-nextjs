@@ -70,7 +70,7 @@ export const testData = [
     option_b: 'Plentiful',
     option_c: 'Rare',
     option_d: 'Limited',
-    correct: 'B' as const,
+    correct_option: 'B' as const,
     explanation: 'The synonym for "abundant" is "plentiful".',
     paper_year: 2021,
     difficulty: 'EASY' as const
@@ -84,7 +84,7 @@ export const testData = [
     option_b: 'Charles Babbage',
     option_c: 'Isaac Newton',
     option_d: 'Alan Turing',
-    correct: 'B' as const,
+    correct_option: 'B' as const,
     explanation: 'Charles Babbage is known as the father of computers.',
     paper_year: 2020,
     difficulty: 'MEDIUM' as const
@@ -98,7 +98,7 @@ export const testData = [
     option_b: '1764',
     option_c: '1776',
     option_d: '1783',
-    correct: 'A' as const,
+    correct_option: 'A' as const,
     explanation: 'The Battle of Plassey took place in 1757.',
     paper_year: 2019,
     difficulty: 'MEDIUM' as const
@@ -112,7 +112,7 @@ export const testData = [
     option_b: 'Europe',
     option_c: 'Antarctica',
     option_d: 'South America',
-    correct: 'A' as const,
+    correct_option: 'A' as const,
     explanation: 'Australia is the smallest continent by land area.',
     paper_year: 2021,
     difficulty: 'EASY' as const
@@ -126,7 +126,7 @@ export const testData = [
     option_b: 'H2O',
     option_c: 'CO2',
     option_d: 'HO',
-    correct: 'B' as const,
+    correct_option: 'B' as const,
     explanation: 'The chemical symbol for water is H2O.',
     paper_year: 2020,
     difficulty: 'EASY' as const
@@ -140,7 +140,7 @@ export const testData = [
     option_b: 'António Guterres',
     option_c: 'Kofi Annan',
     option_d: 'Boutros Boutros-Ghali',
-    correct: 'B' as const,
+    correct_option: 'B' as const,
     explanation: 'António Guterres is the current Secretary-General of the United Nations.',
     paper_year: 2021,
     difficulty: 'MEDIUM' as const
@@ -154,7 +154,7 @@ export const testData = [
     option_b: 'Jean-Jacques Rousseau',
     option_c: 'Thomas Hobbes',
     option_d: 'Montesquieu',
-    correct: 'B' as const,
+    correct_option: 'B' as const,
     explanation: 'Jean-Jacques Rousseau wrote "The Social Contract".',
     paper_year: 2018,
     difficulty: 'MEDIUM' as const
@@ -168,7 +168,7 @@ export const testData = [
     option_b: 'Depression',
     option_c: 'Stagflation',
     option_d: 'Recession',
-    correct: 'B' as const,
+    correct_option: 'B' as const,
     explanation: 'A prolonged period of economic recession is called a depression.',
     paper_year: 2020,
     difficulty: 'MEDIUM' as const
@@ -182,7 +182,7 @@ export const testData = [
     option_b: 'Sens',
     option_c: 'Sence',
     option_d: 'Scent',
-    correct: 'A' as const,
+    correct_option: 'A' as const,
     explanation: 'The correct word is "sense".',
     paper_year: 2021,
     difficulty: 'EASY' as const
@@ -196,7 +196,7 @@ export const testData = [
     option_b: 'Mars',
     option_c: 'Jupiter',
     option_d: 'Venus',
-    correct: 'B' as const,
+    correct_option: 'B' as const,
     explanation: 'Mars is known as the Red Planet.',
     paper_year: 2019,
     difficulty: 'EASY' as const
@@ -210,7 +210,7 @@ export const testData = [
     option_b: 'Abu Bakr',
     option_c: 'Uthman ibn Affan',
     option_d: 'Ali ibn Abi Talib',
-    correct: 'B' as const,
+    correct_option: 'B' as const,
     explanation: 'Abu Bakr was the first Caliph of Islam.',
     paper_year: 2021,
     difficulty: 'MEDIUM' as const
@@ -224,7 +224,7 @@ export const testData = [
     option_b: 'Yamuna',
     option_c: 'Godavari',
     option_d: 'Brahmaputra',
-    correct: 'A' as const,
+    correct_option: 'A' as const,
     explanation: 'The Ganga is the longest river in India.',
     paper_year: 2020,
     difficulty: 'EASY' as const
@@ -238,7 +238,7 @@ export const testData = [
     option_b: 'Nitrogen',
     option_c: 'Carbon Dioxide',
     option_d: 'Argon',
-    correct: 'B' as const,
+    correct_option: 'B' as const,
     explanation: 'Nitrogen is the most abundant gas in the Earth’s atmosphere.',
     paper_year: 2021,
     difficulty: 'MEDIUM' as const
@@ -252,7 +252,7 @@ export const testData = [
     option_b: 'World Food Programme',
     option_c: 'Malala Yousafzai',
     option_d: 'Greta Thunberg',
-    correct: 'B' as const,
+    correct_option: 'B' as const,
     explanation: 'The World Food Programme won the Nobel Peace Prize in 2020.',
     paper_year: 2021,
     difficulty: 'MEDIUM' as const
@@ -266,7 +266,7 @@ export const testData = [
     option_b: 'USA',
     option_c: 'Greece',
     option_d: 'France',
-    correct: 'C' as const,
+    correct_option: 'C' as const,
     explanation: 'Greece is known as the birthplace of democracy.',
     paper_year: 2019,
     difficulty: 'EASY' as const
@@ -280,7 +280,7 @@ export const testData = [
     option_b: 'Global Domestic Product',
     option_c: 'Gross Development Product',
     option_d: 'Gross Domestic Power',
-    correct: 'A' as const,
+    correct_option: 'A' as const,
     explanation: 'GDP stands for Gross Domestic Product.',
     paper_year: 2018,
     difficulty: 'EASY' as const
@@ -294,7 +294,7 @@ export const testData = [
     option_b: 'Wrote',
     option_c: 'Written',
     option_d: 'Writing',
-    correct: 'B' as const,
+    correct_option: 'B' as const,
     explanation: 'The past tense of "write" is "wrote".',
     paper_year: 2020,
     difficulty: 'EASY' as const
@@ -308,7 +308,7 @@ export const testData = [
     option_b: 'Vancouver',
     option_c: 'Ottawa',
     option_d: 'Montreal',
-    correct: 'C' as const,
+    correct_option: 'C' as const,
     explanation: 'Ottawa is the capital of Canada.',
     paper_year: 2021,
     difficulty: 'MEDIUM' as const
@@ -322,7 +322,7 @@ export const testData = [
     option_b: 'Iskander Mirza',
     option_c: 'Ayub Khan',
     option_d: 'Zulfikar Ali Bhutto',
-    correct: 'B' as const,
+    correct_option: 'B' as const,
     explanation: 'Iskander Mirza was the first President of Pakistan.',
     paper_year: 2020,
     difficulty: 'MEDIUM' as const
@@ -336,7 +336,7 @@ export const testData = [
     option_b: 'Rockies',
     option_c: 'Himalayas',
     option_d: 'Alps',
-    correct: 'C' as const,
+    correct_option: 'C' as const,
     explanation: 'Mount Everest is located in the Himalayas.',
     paper_year: 2019,
     difficulty: 'EASY' as const
