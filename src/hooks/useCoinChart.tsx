@@ -71,7 +71,7 @@ function useCoinChart({
   }, [chartTypeOptions.general, memoCoinPriceExtremes])
 
   const isMarketCapSelected = chartTypeOptions.general === "market cap"
-  const coinDataToAccess = isMarketCapSelected ? "market_caps" : "prices"
+  const coinDataToAccess: CoinDataToAccess = isMarketCapSelected ? "market_caps" : "prices"
 
   const barChartDataForCoin: ChartData<"bar", any, string> = {
     labels: coinData.prices.map((data: number[]) =>
@@ -158,6 +158,8 @@ function useCoinChart({
     lineChartDataForCoin,
     chartRef,
     barChartRef,
+    coinData,
+    coinDataToAccess
   }
 }
 

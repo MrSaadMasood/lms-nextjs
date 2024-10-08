@@ -156,3 +156,5 @@ type MarketDataOfSpecificCoin = {
   max_supply: number;
   circulating_supply: number;
 }
+
+type CoinDataToAccess = "market_caps" | "prices"
