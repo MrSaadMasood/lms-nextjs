@@ -1,6 +1,7 @@
 'use client'
 import { Button } from "@/components/ui/button";
 import useToaster from "@/hooks/useToaster";
+import { usePathname, useRouter } from "next/navigation";
 import { FaArrowAltCircleRight } from "react-icons/fa";
 export default function PricingCard({
   heading,
@@ -16,8 +17,11 @@ export default function PricingCard({
   list: string[];
 }) {
   const { errorToast } = useToaster()
+  const pathname = usePathname()
+  const router = useRouter()
   async function makeStripePayment() {
     try {
+      if (!pathname.includes("dashboard")) return router.replace("/login")
       const response = await fetch("/api/user/stripe", {
         method: "POST",
         headers: {

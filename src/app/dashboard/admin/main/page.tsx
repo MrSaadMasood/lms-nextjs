@@ -22,7 +22,7 @@ export default function AdminMainPage() {
       </h2>
       <CSVUplaoder />
       {/* real time data */}
-      <RealTimeDataCardDisplayer liveData={{ total_users: 1, subscription_type: "PERM", free_tokens: 1, performance: 1, total_mcq_bank: 1, total_mcq_solved: 1 }} />
+      {/* <RealTimeDataCardDisplayer liveData={{ total_users: 1, subscription_type: "PERM", free_tokens: 1, performance: 1, total_mcq_bank: 1, total_mcq_solved: 1 }} /> */}
       {/* charts  */}
       <div className="  md:flex md:flex-row md:flex-wrap ">
         {[1, 2].map((item, index) => (
