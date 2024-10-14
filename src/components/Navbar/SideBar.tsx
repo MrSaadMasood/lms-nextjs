@@ -34,7 +34,8 @@ function SideBar() {
                   <motion.li
                     variants={itemsVariants}
                     key={uuid()}
-                    className="flex justify-center items-center  w-full h-[8%]"
+                    className="flex justify-center border-2 border-violet-600 hover:border-violet-900 items-center  
+                    w-[80%] rounded-lg h-[8%]"
                   >
                     <Link href={link.to} onClick={() => setShowSideBar(!showSideBar)}>
                       {link.content}
@@ -65,7 +66,7 @@ function SideBar() {
           </motion.aside>
         </AnimatePresence>
       ) : (
-        <aside className=" md:hidden bg-red-700 w-full h-full flex  justify-end items-center ">
+        <aside className=" md:hidden  w-full h-full flex  justify-end items-center ">
           <FaList
             color="black"
             size={30}

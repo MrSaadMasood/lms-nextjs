@@ -1,4 +1,3 @@
-import { CryptoTableData } from "../types/exported-types";
 
 export const liveData = [
   { heading: "Total Users", stats: 300000 },
@@ -7,9 +6,7 @@ export const liveData = [
   { heading: "MCQs Solved Today", stats: 3000 },
 ];
 export const navbarLink = [
-  { content: "Home", to: "/" },
-  { content: "About", to: "/about" },
-  { content: "Pricing", to: "/#pricing" },
+  { content: "Pricing", to: "/pricing" },
 ];
 
 export const authLinksNavBar = [
