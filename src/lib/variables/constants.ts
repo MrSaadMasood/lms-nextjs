@@ -15,7 +15,7 @@ export const authLinksNavBar = [
   { content: "Admin", to: "/login?admin=true" },
 ];
 
-export const authenticatedUserNavbarLinks = ["/main", "/search?category=academy", "/real-time", "/account"];
+export const authenticatedUserNavbarLinks = ["/main", "/search", "/real-time", "/account"];
 export const authenticatedAdminNavBarLinks = [
   authenticatedUserNavbarLinks[0],
   authenticatedUserNavbarLinks[1],

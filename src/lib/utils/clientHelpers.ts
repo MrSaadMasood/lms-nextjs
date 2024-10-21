@@ -302,3 +302,8 @@ export function seggregateResultsBasedOnSubjects(allSovledMCQs: MCQExtendedForUs
 }
 
 
+export function userNavigationLinkGenerator(path: string) {
+  const isTestSearchPath = path.includes("search")
+  return path + (isTestSearchPath ? "?category=academy" : "")
+
+}
