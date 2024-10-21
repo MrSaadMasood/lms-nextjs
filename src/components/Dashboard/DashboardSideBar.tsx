@@ -7,6 +7,7 @@ import DashboardLayoutTemplate from "./DashboardLayoutTemplate";
 import { v4 as uuid } from "uuid";
 import { SessionProp } from "@/lib/types/exported-types";
 import DashboardSideBarLinks from "./DashboardSideBarLinks";
+import { userNavigationLinkGenerator } from "@/lib/utils/clientHelpers";
 
 function DashBoardSideBar({
   session
@@ -17,11 +18,12 @@ function DashBoardSideBar({
       {session.user.role === "USER" && userNavIcons.map((obj, index) => {
         const Icon = obj.item;
         const isActive = pathname.includes(authenticatedUserNavbarLinks[index]);
+        const navigationLink = userNavigationLinkGenerator(authenticatedUserNavbarLinks[index])
         return (
           <DashboardSideBarLinks
             key={uuid()}
             uuid={uuid()}
-            href={navbarLinkGenerator("USER", authenticatedUserNavbarLinks[index])}
+            href={navbarLinkGenerator("USER", navigationLink)}
             isActive={isActive}
             content={obj.content}
           >

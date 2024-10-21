@@ -6,6 +6,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { v4 as uuid } from "uuid";
 import { adminNavIcons, userNavIcons } from "../componentConstants";
+import { userNavigationLinkGenerator } from "@/lib/utils/clientHelpers";
 
 export default function NavbarAuth({ session }: SessionProp) {
   const pathname = usePathname();
@@ -20,12 +21,13 @@ export default function NavbarAuth({ session }: SessionProp) {
           {session.user.role === "USER" &&
             userNavIcons.map((obj, index) => {
               const isActive = pathname.includes(authenticatedUserNavbarLinks[index]);
+              const navigationLink = userNavigationLinkGenerator(authenticatedUserNavbarLinks[index])
               return (
                 <li key={uuid()}>
                   <Link
                     href={navbarLinkGenerator(
                       session.user.role,
-                      authenticatedUserNavbarLinks[index],
+                      navigationLink
                     )}
                   >
                     <obj.item size={20} color={isActive ? "black" : "gray"} />

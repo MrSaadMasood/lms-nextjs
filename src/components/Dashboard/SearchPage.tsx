@@ -1,11 +1,12 @@
-
+'use client'
 import { FaSearch } from "react-icons/fa";
 import DebouncedInputForTestSearching from "./DebouncedInputForTestSearching";
 import { TestSearchCategoriesAndSelectionFilters } from "./TestSearchCategoriesAndSelectionFilters";
 
-function SearchPage({ categoryData, category, discover }: {
+function SearchPage({ categoryData, category, discover, user }: {
   categoryData: CategoryData[],
   category: TestSearchCategory,
+  user: UserRole,
   discover: string
 }) {
   return (
@@ -35,6 +36,7 @@ function SearchPage({ categoryData, category, discover }: {
       >
         {/* categories */}
         <TestSearchCategoriesAndSelectionFilters
+          user={user}
           categoryData={categoryData}
           category={category}
         />
