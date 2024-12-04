@@ -74,13 +74,13 @@ export const cryptoSchema = z.object({
   id: z.string(),
   symbol: z.string(),
   name: z.string(),
-  image: z.string().url(),
-  current_price: z.number(),
-  market_cap: z.number(),
-  price_change_24h: z.number(),
-  price_change_percentage_24h: z.number(),
-  price_change_percentage_1h_in_currency: z.number(),
-  price_change_percentage_7d_in_currency: z.number()
+  image: z.string().url().nullish(),
+  current_price: z.number().nullish(),
+  market_cap: z.number().nullish(),
+  price_change_24h: z.number().nullish(),
+  price_change_percentage_24h: z.number().nullish(),
+  price_change_percentage_1h_in_currency: z.number().nullish(),
+  price_change_percentage_7d_in_currency: z.number().nullish()
 });
 
 export const coinHistoricalDataSchema = z.object({

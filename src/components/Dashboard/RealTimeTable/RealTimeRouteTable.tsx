@@ -1,5 +1,5 @@
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { HiDotsHorizontal } from "react-icons/hi";
 import {
   Table,
   TableBody,
@@ -21,18 +21,9 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { useMemo, useState } from "react";
-import { DataTableColumnHeader } from "./DataTableColumnHeadet";
+import { z } from "zod";
 import DataTablePagination from "./DataTablePagination";
 import { DataTableViewOptions } from "./DataTableViewOptions";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu, DropdownMenuContent,
-  DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator,
-  DropdownMenuTrigger
-} from "@/components/ui/dropdown-menu";
-import Link from "next/link";
-import { z } from "zod";
 
 
 
