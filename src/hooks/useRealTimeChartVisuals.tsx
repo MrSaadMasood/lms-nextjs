@@ -21,6 +21,7 @@ function useRealTimeChartVisuals() {
     coinListWithMarketData()
       .then(res => res.json())
       .then(data => {
+        console.log('the data is', data)
         const parsedCryptoData = z.array(cryptoSchema).parse(data)
         setCryptoTableData(parsedCryptoData)
       })
